@@ -1,0 +1,4 @@
+{
+  "python.analysis.extraPaths": ["backend", "backend/core"],
+  "python.autoComplete.extraPaths": ["backend", "backend/core"]
+}

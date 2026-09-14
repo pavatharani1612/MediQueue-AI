@@ -1,0 +1,1 @@
+"""MediQueue AI service package."""

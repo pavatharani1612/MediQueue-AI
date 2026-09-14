@@ -1,0 +1,16 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+joblib==1.4.2
+APScheduler==3.10.4
+reportlab==4.2.2
+openpyxl==3.1.5
+email-validator==2.2.0
+qrcode==7.4.2
+Pillow==10.4.0
+pypng==0.20220715.0
+python-barcode==0.15.1
+flask-socketio==5.3.6
+pytest==8.3.2

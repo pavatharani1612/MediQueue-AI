@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — MediQueue AI{% endblock %}
+{% block content %}
+<div class="mq-wrap" style="max-width:620px">
+  <div class="mq-card mq-center" style="padding:38px">
+    <div style="font-size:46px">{{ '✅' if ok else '⚠️' }}</div>
+    <h1 class="mq-title" style="margin-top:10px">{{ title }}</h1>
+    <p class="mq-sub">{{ message }}</p>
+    <a class="mq-btn" href="/login">Go to MediQueue AI</a>
+  </div>
+</div>
+{% endblock %}

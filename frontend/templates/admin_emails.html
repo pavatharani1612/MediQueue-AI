@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Email Logs</h1>
+  <p class="section-sub">SMTP {{ 'ENABLED' if CFG.SMTP_ENABLED else 'DISABLED (logged only)' }}. Edit <code>config.py</code>.</p>
+  <div class="card" style="padding:0"><table>
+    <tr><th>Time</th><th>To</th><th>Subject</th><th>Status</th></tr>
+    {% for r in rows %}<tr><td>{{r.created_at[:19]}}</td><td>{{r.recipient}}</td>
+      <td>{{r.subject}}</td><td>{{r.status}}</td></tr>{% endfor %}
+  </table></div>
+</div>{% endblock %}

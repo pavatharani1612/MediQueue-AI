@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Contact Us</h1>
+  <div class="grid c2">
+    <div class="card">
+      <form>
+        <label>Name</label><input required/>
+        <label>Email</label><input type="email" required/>
+        <label>Message</label><textarea rows="4"></textarea>
+        <button class="btn" style="margin-top:12px">Send Message</button>
+      </form>
+    </div>
+    <div class="card gradient-card">
+      <h3>Reach Us</h3>
+      <p>🏥 {{CFG.HOSPITAL_NAME}}</p>
+      <p>📞 {{CFG.EMERGENCY_NUMBER}}</p>
+      <p>🕐 {{CFG.WORKING_HOURS}}</p>
+      <p>📍 MediQueue Health Campus, City Center</p>
+    </div>
+  </div>
+</div>{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Queue Status</h1>
+  <p class="section-sub">Your queue updates automatically — no action needed.</p>
+  <div class="grid c2" id="queueGrid">
+    {% for a in appts %}
+    <div class="card" data-appt="{{a.id}}">
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+        <div class="ring" style="--pct:70%"><div class="val">{{a.queue_no}}</div></div>
+        <div style="min-width:0;flex:1">
+          <h3 style="margin:0">{{a.dname}}</h3>
+          <p style="color:var(--muted);margin:4px 0">{{a.ddept}} · {{a.reason}}</p>
+          <p>Predicted: <b class="q-time">{{ a.predicted_time | ampm }}</b></p>
+          <span class="status-pill st-{{ (a.checkin_status or a.status)|lower|replace(' ','-') }}">
+            {{ a.checkin_status or a.status }}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <a class="btn sm" href="/patient/qr/{{a.id}}">🎟️ QR Pass</a>
+        <a class="btn sm" style="background:#2563eb;color:#fff" href="/patient/wait5/{{a.id}}">⏱️ Waiting 5 Min</a>
+        <a class="btn ghost sm" href="/patient/reappoint-request/{{a.id}}">🔁 Reappointment</a>
+        <a class="btn danger sm" href="/patient/response/{{a.id}}/cancel">Cancel</a>
+      </div>
+    </div>
+    {% else %}<p style="color:var(--muted)">No active appointments in the queue.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+// Queue refreshes itself every 8 seconds — status and predicted time only.
+async function pollPatientQueue(){
+  try{
+    const r = await fetch('/api/patient/live', {headers:{'X-Requested-With':'XMLHttpRequest'}});
+    if(!r.ok) return;
+    const d = await r.json();
+    (d.appointments || []).forEach(a => {
+      const card = document.querySelector('.card[data-appt="' + a.id + '"]') ||
+        Array.from(document.querySelectorAll('#queueGrid .card'))
+          .find(c => c.querySelector('.ring .val')?.textContent.trim() === a.queue_no);
+      if(!card) return;
+      const t = card.querySelector('.q-time'); if(t && a.predicted_time) t.textContent = a.predicted_time;
+      const pill = card.querySelector('.status-pill');
+      const st = a.checkin_status || a.status;
+      if(pill && st){
+        pill.textContent = st;
+        pill.className = 'status-pill st-' + st.toLowerCase().replace(/ /g,'-');
+      }
+    });
+  }catch(e){}
+}
+setInterval(pollPatientQueue, 8000);
+document.addEventListener('DOMContentLoaded', pollPatientQueue);
+</script>{% endblock %}

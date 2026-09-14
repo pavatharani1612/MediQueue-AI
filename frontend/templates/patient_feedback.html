@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Rate Your Consultation — MediQueue AI{% endblock %}
+{% block content %}
+<div class="container" style="max-width:720px">
+  <div class="card glass" data-anim="fade-up">
+    <h2 class="section-title" style="font-size:26px;margin-bottom:4px">
+      💬 Rate Your Consultation
+    </h2>
+    <p class="section-sub">
+      Dr. <b>{{ a.dname }}</b> · {{ a.ddept }} · Queue <b>{{ a.queue_no }}</b>
+    </p>
+
+    <form method="post" class="review-form">
+      {# --- OVERALL --- #}
+      <label class="rlabel">Overall Experience</label>
+      <div class="stars" data-name="rating"
+           data-value="{{ existing.rating if existing else 5 }}">
+        {% for i in range(1,6) %}<span class="star" data-v="{{ i }}">★</span>{% endfor %}
+      </div>
+      <input type="hidden" name="rating"
+             value="{{ existing.rating if existing else 5 }}"/>
+
+      {# --- DOCTOR --- #}
+      <label class="rlabel">Doctor Behaviour</label>
+      <div class="stars" data-name="doctor_rating"
+           data-value="{{ existing.doctor_rating if existing else 5 }}">
+        {% for i in range(1,6) %}<span class="star" data-v="{{ i }}">★</span>{% endfor %}
+      </div>
+      <input type="hidden" name="doctor_rating"
+             value="{{ existing.doctor_rating if existing else 5 }}"/>
+
+      {# --- HOSPITAL --- #}
+      <label class="rlabel">Hospital Experience</label>
+      <div class="stars" data-name="hospital_rating"
+           data-value="{{ existing.hospital_rating if existing else 5 }}">
+        {% for i in range(1,6) %}<span class="star" data-v="{{ i }}">★</span>{% endfor %}
+      </div>
+      <input type="hidden" name="hospital_rating"
+             value="{{ existing.hospital_rating if existing else 5 }}"/>
+
+      <label class="rlabel" style="margin-top:14px">Your Review</label>
+      <textarea name="review" rows="4" maxlength="1000"
+                placeholder="Share your experience so we can improve..."
+      >{{ existing.review or '' }}</textarea>
+
+      <button class="btn ripple" style="width:100%;margin-top:16px">
+        {{ 'Update Feedback' if existing else 'Submit Feedback' }}
+      </button>
+    </form>
+  </div>
+</div>
+
+<style>
+.review-form .rlabel{display:block;font-weight:600;color:var(--royal);margin:12px 0 6px}
+.stars{display:inline-flex;gap:6px;font-size:34px;cursor:pointer;user-select:none}
+.stars .star{color:#cbd5e1;transition:transform .18s var(--ease),color .18s}
+.stars .star:hover{transform:scale(1.18)}
+.stars .star.on{color:#f59e0b;text-shadow:0 4px 12px rgba(245,158,11,.35);
+                animation:pop .35s var(--ease)}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+</style>
+<script>
+document.querySelectorAll('.stars').forEach(wrap=>{
+  const name = wrap.dataset.name;
+  const hidden = document.querySelector('input[name="'+name+'"]');
+  const set = v=>{
+    wrap.dataset.value = v;
+    hidden.value = v;
+    [...wrap.children].forEach(s=>s.classList.toggle('on', +s.dataset.v<=v));
+  };
+  set(+wrap.dataset.value);
+  wrap.querySelectorAll('.star').forEach(s=>{
+    s.addEventListener('click',()=>set(+s.dataset.v));
+    s.addEventListener('mouseover',()=>[...wrap.children].forEach(x=>
+      x.classList.toggle('on', +x.dataset.v<=+s.dataset.v)));
+    s.addEventListener('mouseout',()=>set(+wrap.dataset.value));
+  });
+});
+</script>
+{% endblock %}

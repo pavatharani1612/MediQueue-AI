@@ -1,0 +1,501 @@
+department,patient_count,avg_time,delay,late,emergency,actual_time,wait_time
+Neurology,23,35,9,5,3,35,879
+Pediatrics,8,15,14,0,0,14,143
+Gynecology,24,20,4,4,2,27,531
+Orthopedics,14,25,2,4,0,24,377
+Orthopedics,21,25,17,1,3,22,597
+Gynecology,14,20,10,1,1,23,311
+Orthopedics,24,25,8,2,3,25,666
+Orthopedics,19,25,15,2,3,29,548
+General Medicine,19,10,5,3,1,15,221
+General Medicine,16,10,15,3,0,11,186
+Gynecology,9,20,5,2,0,21,198
+Ophthalmology,14,15,3,0,3,22,267
+Ophthalmology,9,15,14,1,1,19,171
+Dermatology,4,20,7,3,1,17,123
+Ophthalmology,13,15,18,5,1,23,261
+Ophthalmology,23,15,4,0,2,17,377
+General Medicine,12,10,19,0,3,12,185
+Dentistry,20,20,6,1,2,23,443
+Ophthalmology,19,15,2,3,3,11,342
+Orthopedics,22,25,13,4,2,23,610
+Pediatrics,1,15,16,1,3,14,78
+Pediatrics,7,15,18,1,3,19,173
+General Medicine,17,10,5,2,2,6,214
+General Medicine,2,10,10,0,0,18,36
+ENT,11,15,1,2,0,15,171
+Pediatrics,2,15,18,3,0,23,63
+Neurology,24,35,2,3,2,43,890
+Orthopedics,17,25,15,5,2,22,492
+Cardiology,19,30,5,3,3,32,641
+ENT,20,15,13,5,0,16,338
+Pediatrics,20,15,4,5,3,12,380
+Dentistry,21,20,0,4,1,26,459
+Neurology,5,35,14,4,1,40,227
+Dentistry,5,20,13,4,2,27,162
+Neurology,14,35,0,5,2,33,548
+Ophthalmology,24,15,6,2,3,18,420
+Pediatrics,21,15,18,0,1,20,355
+Gynecology,4,20,6,1,3,26,134
+General Medicine,13,10,3,4,3,17,195
+Ophthalmology,16,15,2,4,0,15,259
+Pediatrics,16,15,17,5,2,14,319
+Pediatrics,17,15,10,5,0,20,294
+Gynecology,21,20,9,0,3,19,471
+Cardiology,12,30,0,0,0,34,356
+Dermatology,22,20,14,4,0,21,471
+Cardiology,13,30,17,5,2,34,461
+Cardiology,2,30,2,0,3,29,115
+ENT,2,15,14,3,0,18,57
+Dentistry,15,20,14,4,2,28,372
+Dentistry,9,20,14,3,3,19,249
+ENT,7,15,7,3,1,19,151
+General Medicine,4,10,17,1,0,9,61
+General Medicine,11,10,2,3,0,9,127
+ENT,25,15,0,0,2,19,405
+General Medicine,19,10,9,2,0,12,217
+Cardiology,25,30,20,5,0,31,803
+Dermatology,10,20,14,1,3,16,266
+General Medicine,8,10,14,1,0,18,97
+Cardiology,5,30,2,0,1,26,170
+Orthopedics,22,25,10,5,1,25,597
+General Medicine,9,10,18,1,1,8,133
+Ophthalmology,5,15,16,0,2,15,127
+Dermatology,13,20,14,5,3,22,348
+Orthopedics,16,25,7,1,2,30,450
+Dermatology,24,20,11,1,2,28,530
+Dermatology,23,20,17,5,1,17,526
+Orthopedics,24,25,14,5,1,22,664
+Cardiology,2,30,16,5,2,30,135
+ENT,6,15,3,0,0,13,93
+Cardiology,9,30,12,4,1,28,327
+Pediatrics,4,15,19,2,1,15,112
+Gynecology,20,20,16,4,1,16,450
+Neurology,16,35,7,5,2,39,617
+Gynecology,21,20,5,0,1,27,435
+Dentistry,24,20,11,5,0,25,511
+ENT,7,15,10,2,1,11,139
+Dentistry,8,20,17,5,3,21,256
+Dentistry,12,20,11,4,2,22,310
+Gynecology,8,20,18,5,0,16,207
+Neurology,8,35,0,4,2,32,328
+Dentistry,14,20,11,4,2,21,337
+Orthopedics,21,25,2,5,1,26,576
+Dermatology,18,20,17,1,1,19,403
+General Medicine,17,10,16,5,3,11,254
+General Medicine,18,10,17,2,1,9,230
+Cardiology,1,30,18,5,2,38,110
+Gynecology,9,20,3,1,0,22,195
+Dentistry,9,20,4,5,0,26,215
+Dentistry,2,20,8,5,0,22,83
+General Medicine,23,10,12,1,1,11,265
+Ophthalmology,8,15,1,0,0,15,129
+Gynecology,7,20,3,0,3,28,196
+ENT,12,15,19,2,2,20,238
+Neurology,1,35,11,5,3,43,112
+ENT,22,15,12,2,3,11,398
+ENT,17,15,7,3,0,23,281
+Dermatology,16,20,14,1,3,17,388
+Dentistry,12,20,16,2,2,24,298
+Orthopedics,20,25,19,3,0,27,539
+ENT,25,15,5,2,3,15,444
+Orthopedics,18,25,1,1,3,21,498
+Dermatology,19,20,1,2,1,18,402
+Dermatology,20,20,4,0,2,17,438
+Dentistry,25,20,12,5,3,25,591
+Dermatology,21,20,6,4,2,16,483
+Gynecology,23,20,15,3,3,21,536
+General Medicine,23,10,10,0,1,8,258
+Dermatology,20,20,18,4,2,19,476
+Orthopedics,23,25,2,1,2,27,611
+Dentistry,3,20,10,1,0,27,85
+Orthopedics,16,25,7,4,0,23,430
+Dermatology,5,20,2,3,1,16,132
+Dentistry,21,20,10,1,1,20,452
+Dentistry,6,20,1,0,0,28,124
+General Medicine,23,10,17,0,3,17,298
+General Medicine,9,10,6,2,3,14,161
+Dentistry,10,20,8,0,3,28,256
+Dentistry,13,20,11,5,1,27,320
+General Medicine,13,10,20,3,3,12,214
+Gynecology,14,20,9,1,3,27,342
+Dentistry,24,20,11,4,3,18,559
+Cardiology,20,30,7,0,2,38,633
+Pediatrics,20,15,14,2,2,18,351
+Pediatrics,25,15,15,0,3,18,432
+Dermatology,24,20,12,2,0,26,499
+Dermatology,23,20,16,1,2,20,519
+General Medicine,24,10,3,1,3,16,292
+Cardiology,9,30,5,3,2,27,323
+Neurology,16,35,2,1,0,37,567
+Ophthalmology,3,15,5,4,1,23,81
+Dentistry,14,20,11,5,1,26,330
+Dermatology,19,20,3,2,3,20,435
+Dermatology,2,20,0,0,0,17,43
+Cardiology,4,30,6,4,1,35,156
+Gynecology,20,20,16,1,1,28,440
+ENT,4,15,2,2,3,13,115
+Gynecology,19,20,5,5,2,28,447
+General Medicine,10,10,11,1,3,15,156
+Dermatology,17,20,9,2,3,22,407
+Pediatrics,12,15,1,4,3,17,251
+Dermatology,4,20,3,4,2,16,132
+Ophthalmology,1,15,8,1,0,13,31
+Ophthalmology,22,15,7,4,2,22,386
+Ophthalmology,3,15,15,0,2,11,85
+Dermatology,18,20,4,3,3,16,429
+Orthopedics,14,25,4,0,1,25,377
+Ophthalmology,10,15,9,4,0,20,183
+Dentistry,22,20,15,1,0,16,461
+ENT,6,15,8,2,0,19,118
+Orthopedics,6,25,9,4,0,26,179
+Gynecology,12,20,16,0,0,22,253
+Gynecology,10,20,16,1,3,26,267
+General Medicine,4,10,6,0,0,18,47
+General Medicine,21,10,12,3,0,11,243
+Orthopedics,10,25,8,5,0,24,281
+Gynecology,5,20,5,2,3,16,156
+General Medicine,19,10,17,1,0,18,209
+Ophthalmology,1,15,4,1,1,14,47
+Ophthalmology,4,15,16,5,1,21,122
+Gynecology,24,20,11,1,1,27,514
+Pediatrics,2,15,18,2,2,11,90
+General Medicine,3,10,15,2,0,15,52
+ENT,5,15,9,5,1,13,121
+Cardiology,12,30,9,0,2,34,402
+Neurology,12,35,1,5,3,34,498
+Dentistry,11,20,12,1,0,20,236
+General Medicine,11,10,1,1,2,6,148
+Cardiology,6,30,2,3,1,34,211
+Dentistry,17,20,7,1,3,28,400
+Neurology,7,35,15,1,1,36,284
+Cardiology,23,30,16,1,3,30,766
+ENT,21,15,17,5,0,20,363
+Orthopedics,24,25,2,1,3,23,647
+Dermatology,7,20,2,3,1,20,168
+Neurology,1,35,13,3,2,34,96
+Gynecology,16,20,11,2,3,25,381
+Ophthalmology,17,15,4,3,3,16,315
+Dermatology,9,20,0,1,2,20,212
+Cardiology,4,30,17,3,1,34,177
+Gynecology,22,20,17,2,1,28,483
+ENT,13,15,9,2,3,18,259
+Dentistry,15,20,15,1,0,22,323
+Orthopedics,13,25,5,0,2,27,357
+Orthopedics,16,25,8,4,0,22,436
+ENT,12,15,14,5,1,20,232
+Gynecology,22,20,15,4,0,21,482
+Orthopedics,24,25,2,1,3,21,657
+Orthopedics,20,25,19,5,0,27,541
+General Medicine,5,10,8,5,3,13,128
+Dentistry,5,20,0,5,1,16,150
+Ophthalmology,21,15,19,5,2,15,385
+Dentistry,3,20,4,4,3,27,132
+Neurology,21,35,15,1,0,38,755
+ENT,18,15,6,0,0,15,285
+Orthopedics,11,25,10,2,2,24,327
+Dentistry,7,20,2,2,0,19,161
+Ophthalmology,21,15,15,0,0,13,338
+Dentistry,11,20,7,0,0,18,227
+Cardiology,8,30,20,0,2,30,287
+Dermatology,15,20,19,5,2,17,378
+Dentistry,14,20,20,3,3,23,357
+Cardiology,17,30,10,3,0,28,543
+Neurology,12,35,3,0,0,34,421
+Gynecology,24,20,9,2,1,24,520
+Pediatrics,17,15,9,2,3,15,324
+ENT,22,15,15,5,3,13,424
+Pediatrics,16,15,16,5,3,20,333
+Gynecology,4,20,0,4,0,24,101
+Dermatology,15,20,6,4,2,26,354
+General Medicine,25,10,13,1,3,15,322
+Neurology,17,35,19,0,2,41,645
+Ophthalmology,21,15,2,2,2,12,364
+Gynecology,7,20,15,5,2,22,207
+Orthopedics,9,25,19,1,0,29,259
+Dermatology,22,20,12,1,1,26,481
+Cardiology,1,30,5,1,0,36,41
+Pediatrics,18,15,14,2,2,13,331
+Dentistry,23,20,17,0,1,17,500
+Cardiology,13,30,18,2,2,38,453
+Neurology,22,35,12,1,0,37,791
+Ophthalmology,21,15,11,0,0,23,324
+Cardiology,4,30,11,4,0,26,152
+Neurology,17,35,11,0,3,39,652
+Pediatrics,7,15,2,4,2,12,161
+Orthopedics,10,25,2,0,3,27,307
+Ophthalmology,11,15,3,0,3,21,222
+Pediatrics,25,15,9,0,3,15,428
+Pediatrics,14,15,16,3,3,14,296
+Gynecology,2,20,4,2,0,18,60
+Orthopedics,14,25,6,4,1,28,401
+Ophthalmology,20,15,1,2,3,23,352
+Cardiology,4,30,17,5,0,29,167
+Dentistry,19,20,12,2,2,16,437
+Orthopedics,22,25,4,0,2,22,582
+General Medicine,11,10,1,4,0,7,141
+Neurology,13,35,6,4,3,40,526
+Orthopedics,1,25,3,0,3,31,70
+Cardiology,1,30,18,5,3,35,125
+Dermatology,6,20,11,5,3,27,202
+Pediatrics,14,15,4,2,1,23,235
+Cardiology,19,30,20,0,0,35,594
+Dentistry,14,20,8,2,0,22,298
+Dentistry,5,20,1,0,0,25,103
+General Medicine,12,10,7,2,3,8,183
+Gynecology,7,20,13,2,3,20,214
+Ophthalmology,16,15,6,5,1,12,291
+Ophthalmology,15,15,20,5,2,21,298
+General Medicine,11,10,18,4,2,11,187
+ENT,17,15,19,2,3,17,331
+Pediatrics,8,15,8,0,1,23,149
+Pediatrics,15,15,4,0,0,16,231
+Ophthalmology,4,15,20,5,3,12,149
+General Medicine,9,10,2,4,2,13,138
+General Medicine,12,10,16,0,1,13,150
+General Medicine,1,10,3,0,3,17,53
+Pediatrics,25,15,9,0,3,20,434
+Dentistry,12,20,13,4,1,21,294
+Gynecology,19,20,17,4,1,19,435
+Dentistry,3,20,5,4,0,26,84
+Pediatrics,5,15,13,0,1,18,101
+Cardiology,16,30,14,3,1,32,526
+Pediatrics,9,15,13,1,3,16,197
+Dermatology,4,20,15,1,3,27,151
+Dermatology,12,20,1,4,3,21,314
+Orthopedics,17,25,0,3,1,27,456
+Pediatrics,18,15,12,2,3,23,344
+Orthopedics,16,25,17,0,3,32,465
+ENT,13,15,18,1,1,19,240
+Gynecology,7,20,8,1,2,28,180
+General Medicine,22,10,8,3,2,11,280
+Dentistry,24,20,12,0,3,25,534
+General Medicine,25,10,12,5,2,15,317
+Dermatology,16,20,0,5,3,28,394
+Gynecology,7,20,17,1,3,22,205
+Cardiology,8,30,15,5,2,34,306
+Dermatology,6,20,14,2,1,20,156
+Gynecology,13,20,8,2,2,20,303
+Cardiology,5,30,14,5,1,34,208
+Ophthalmology,23,15,1,3,3,20,413
+General Medicine,5,10,13,1,1,12,91
+Neurology,18,35,7,1,1,42,657
+Cardiology,9,30,0,1,3,36,315
+General Medicine,8,10,5,5,2,7,138
+Ophthalmology,13,15,16,5,3,15,286
+Neurology,16,35,13,0,2,43,605
+General Medicine,5,10,15,2,0,16,84
+Ophthalmology,3,15,6,4,2,14,109
+Ophthalmology,7,15,10,2,3,11,173
+Gynecology,4,20,10,1,0,17,98
+Neurology,2,35,10,5,1,32,115
+Dentistry,9,20,14,0,1,24,213
+Cardiology,11,30,18,3,0,38,369
+Dentistry,10,20,12,0,0,24,207
+Ophthalmology,2,15,5,5,0,17,62
+Pediatrics,17,15,1,3,0,21,279
+Orthopedics,1,25,14,0,0,29,38
+Gynecology,24,20,3,3,3,24,541
+Dentistry,7,20,14,1,2,20,190
+Neurology,2,35,10,1,1,34,107
+Gynecology,5,20,17,1,1,27,139
+General Medicine,11,10,0,4,2,14,160
+Cardiology,7,30,10,3,3,30,280
+General Medicine,14,10,15,4,2,14,206
+Cardiology,21,30,6,0,3,28,689
+Dermatology,25,20,16,1,0,27,530
+Cardiology,8,30,14,0,1,31,265
+Dentistry,1,20,20,4,3,23,109
+ENT,16,15,14,0,3,11,302
+Gynecology,21,20,2,2,0,27,441
+Pediatrics,14,15,5,4,2,21,264
+Neurology,3,35,6,5,0,37,143
+Ophthalmology,2,15,1,0,1,12,49
+General Medicine,8,10,19,1,2,11,131
+Orthopedics,15,25,3,3,3,30,437
+Cardiology,23,30,11,0,2,38,733
+Orthopedics,2,25,19,3,2,24,109
+Pediatrics,17,15,8,0,2,11,291
+General Medicine,18,10,2,0,0,17,184
+ENT,23,15,11,1,0,19,359
+General Medicine,19,10,7,2,2,17,233
+Gynecology,23,20,20,3,3,20,547
+General Medicine,23,10,20,2,1,12,272
+Ophthalmology,19,15,13,3,1,11,332
+General Medicine,6,10,15,0,2,12,102
+Dermatology,18,20,20,3,3,26,442
+Neurology,11,35,2,2,3,37,450
+General Medicine,12,10,5,2,0,17,136
+Dentistry,9,20,18,1,1,27,222
+Dentistry,18,20,2,4,0,16,377
+Pediatrics,15,15,19,4,3,14,311
+Cardiology,6,30,3,1,1,26,204
+Cardiology,2,30,4,4,0,36,92
+ENT,12,15,7,4,1,20,223
+Ophthalmology,8,15,8,4,3,15,194
+Ophthalmology,4,15,8,1,0,11,82
+Pediatrics,25,15,3,2,0,13,390
+Neurology,21,35,16,3,0,42,774
+Dentistry,3,20,16,3,3,22,141
+Pediatrics,6,15,20,0,3,17,151
+Cardiology,4,30,7,1,2,32,171
+ENT,21,15,16,5,0,23,354
+Dentistry,12,20,0,0,2,28,280
+ENT,9,15,1,4,2,19,193
+Dentistry,11,20,18,1,0,17,251
+Orthopedics,23,25,0,4,1,32,614
+Dermatology,7,20,10,0,1,28,170
+Pediatrics,13,15,7,1,1,15,222
+Dermatology,18,20,10,0,1,19,393
+General Medicine,9,10,16,1,1,18,134
+Cardiology,15,30,7,0,2,29,486
+Orthopedics,20,25,3,0,1,22,514
+ENT,17,15,11,2,2,21,302
+Ophthalmology,16,15,0,5,1,17,289
+Cardiology,25,30,8,5,2,31,819
+Gynecology,2,20,9,2,3,28,114
+Ophthalmology,8,15,3,0,1,14,142
+ENT,20,15,6,4,3,22,367
+Cardiology,24,30,20,2,0,36,756
+Orthopedics,17,25,16,2,2,29,486
+Neurology,18,35,2,1,1,38,653
+Neurology,2,35,11,1,0,37,90
+Dermatology,10,20,6,1,3,21,254
+Orthopedics,25,25,17,4,1,23,683
+Orthopedics,6,25,8,1,2,32,201
+Orthopedics,23,25,10,0,0,30,580
+Neurology,2,35,12,3,3,33,152
+Orthopedics,5,25,15,2,1,31,165
+Dermatology,2,20,1,1,3,20,87
+General Medicine,14,10,20,3,0,11,183
+Cardiology,4,30,20,0,0,30,144
+Dermatology,19,20,6,2,0,25,395
+Cardiology,21,30,16,0,0,32,647
+ENT,11,15,6,0,1,16,190
+Dentistry,25,20,6,2,2,18,545
+Dentistry,4,20,8,2,1,22,116
+General Medicine,1,10,4,4,1,11,45
+Ophthalmology,13,15,8,2,0,23,214
+Orthopedics,23,25,2,1,1,29,592
+Dermatology,18,20,7,0,2,19,394
+ENT,4,15,20,0,3,13,128
+Ophthalmology,9,15,11,0,3,20,200
+General Medicine,21,10,14,2,3,12,289
+Orthopedics,14,25,11,1,3,25,411
+Pediatrics,15,15,19,5,2,22,294
+Dentistry,7,20,1,2,2,25,180
+Pediatrics,21,15,0,4,1,19,350
+Ophthalmology,21,15,3,3,0,15,335
+Pediatrics,23,15,7,5,1,22,395
+Orthopedics,19,25,7,1,1,25,511
+Dentistry,23,20,9,3,0,27,491
+Pediatrics,8,15,9,1,0,22,141
+Pediatrics,25,15,18,3,2,15,439
+Gynecology,9,20,4,1,3,22,232
+Pediatrics,10,15,17,1,3,16,212
+Orthopedics,2,25,14,1,1,22,83
+Orthopedics,20,25,11,1,0,31,511
+Orthopedics,6,25,14,3,0,33,181
+Gynecology,2,20,6,3,2,25,87
+Gynecology,1,20,13,2,2,16,69
+Pediatrics,23,15,11,3,2,20,397
+Dentistry,14,20,5,5,3,23,353
+ENT,21,15,8,4,0,15,343
+Pediatrics,21,15,7,4,3,21,388
+Orthopedics,11,25,9,4,1,28,315
+Orthopedics,7,25,17,3,0,22,213
+Gynecology,2,20,12,4,1,21,96
+ENT,1,15,2,4,0,21,44
+Orthopedics,5,25,17,5,3,28,220
+Cardiology,25,30,3,3,3,32,811
+Neurology,16,35,2,3,0,36,579
+Gynecology,6,20,17,1,0,23,145
+Dermatology,17,20,15,0,1,20,368
+Cardiology,25,30,5,5,3,27,831
+Cardiology,18,30,6,3,2,29,601
+Pediatrics,5,15,20,3,2,13,150
+ENT,11,15,1,3,1,18,202
+Neurology,11,35,17,3,3,41,463
+Gynecology,3,20,3,2,1,17,84
+Pediatrics,11,15,17,3,3,12,242
+Dentistry,14,20,3,4,0,27,313
+ENT,4,15,11,0,0,12,73
+ENT,11,15,6,3,3,12,233
+ENT,15,15,15,5,3,22,308
+Dentistry,9,20,3,4,0,28,208
+Neurology,5,35,5,1,3,38,229
+Cardiology,3,30,14,2,2,33,147
+General Medicine,10,10,20,4,1,11,156
+Cardiology,14,30,17,3,2,29,488
+Dentistry,18,20,8,3,1,25,404
+Gynecology,12,20,17,5,1,19,302
+General Medicine,19,10,0,5,3,7,269
+Orthopedics,18,25,4,2,0,22,472
+Cardiology,19,30,8,0,0,38,577
+Dentistry,1,20,7,0,2,20,61
+ENT,8,15,3,5,1,13,163
+Ophthalmology,10,15,11,2,1,15,195
+General Medicine,23,10,10,1,3,17,293
+Orthopedics,3,25,3,1,2,32,115
+Pediatrics,21,15,6,5,0,21,342
+Gynecology,18,20,2,5,3,26,442
+Orthopedics,9,25,15,4,1,31,275
+Orthopedics,9,25,0,3,3,29,290
+Cardiology,6,30,11,0,3,34,243
+Cardiology,7,30,19,3,2,38,275
+Neurology,12,35,10,5,3,34,502
+Gynecology,9,20,9,4,0,20,214
+Gynecology,8,20,14,2,2,16,209
+Ophthalmology,24,15,12,1,3,15,419
+Orthopedics,14,25,14,5,3,22,430
+Pediatrics,1,15,11,2,3,19,77
+Gynecology,11,20,1,1,3,26,281
+Orthopedics,9,25,12,1,2,26,275
+Gynecology,12,20,8,2,2,28,291
+ENT,25,15,4,3,1,21,412
+Pediatrics,21,15,1,5,0,17,336
+General Medicine,5,10,8,1,0,12,59
+ENT,9,15,2,4,0,17,163
+General Medicine,13,10,4,3,0,16,146
+General Medicine,16,10,5,0,0,7,171
+Orthopedics,23,25,5,0,0,25,580
+Gynecology,22,20,13,5,2,20,506
+Ophthalmology,4,15,19,0,2,11,107
+Ophthalmology,18,15,12,5,3,22,348
+Ophthalmology,10,15,12,5,0,14,197
+Neurology,11,35,0,1,3,38,444
+General Medicine,18,10,12,5,2,17,256
+Ophthalmology,15,15,17,2,0,17,249
+ENT,22,15,20,3,3,23,405
+Ophthalmology,15,15,7,5,1,13,273
+Pediatrics,17,15,7,4,0,14,282
+Dermatology,22,20,1,5,0,19,466
+Cardiology,11,30,0,4,3,29,394
+Dentistry,22,20,1,0,0,22,450
+Cardiology,11,30,18,5,1,35,385
+Orthopedics,25,25,10,4,1,33,676
+Pediatrics,22,15,17,2,3,16,412
+Dentistry,10,20,20,3,1,28,255
+Ophthalmology,17,15,20,4,1,15,313
+ENT,13,15,19,4,3,19,275
+Cardiology,6,30,20,4,2,37,246
+Orthopedics,17,25,5,5,3,23,499
+Dentistry,2,20,8,3,3,26,113
+Dermatology,24,20,11,0,3,19,535
+Dentistry,12,20,5,0,0,27,244
+General Medicine,8,10,15,1,3,9,153
+Dentistry,1,20,8,1,0,28,39
+Dermatology,13,20,18,2,0,25,288
+Pediatrics,18,15,12,1,0,18,285
+Ophthalmology,17,15,19,5,2,16,329
+Pediatrics,3,15,6,3,2,22,103
+Gynecology,5,20,14,4,0,27,135
+Neurology,22,35,15,4,2,36,834
+Dentistry,9,20,10,4,3,28,264
+Ophthalmology,22,15,1,2,2,14,374
+ENT,19,15,16,0,0,15,299
+Dentistry,4,20,12,0,2,22,129
+Cardiology,23,30,18,4,3,38,783
+Cardiology,16,30,17,2,3,26,555
+General Medicine,13,10,14,3,0,14,155
+Orthopedics,25,25,18,5,1,31,687

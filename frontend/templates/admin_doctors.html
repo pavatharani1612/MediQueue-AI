@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Manage Doctors</h1>
+  <details class="card" style="margin-bottom:18px">
+    <summary style="cursor:pointer;font-weight:700;color:var(--deep)">+ Add New Doctor</summary>
+    <form method="post" style="margin-top:14px">
+      <div class="form-grid">
+        <div><label>Name</label><input name="name" required/></div>
+        <div><label>Department</label><select name="department">{% for d in depts %}<option>{{d.name}}</option>{% endfor %}</select></div>
+        <div><label>Qualification</label><input name="qualification" value="MBBS, MD"/></div>
+        <div><label>Experience (yrs)</label><input name="experience" type="number" value="10"/></div>
+        <div><label>Specialization</label><input name="specialization"/></div>
+        <div><label>Fee (₹)</label><input name="fee" type="number" value="500"/></div>
+        <div><label>Avg Time (min)</label><input name="avg_time" type="number" value="15"/></div>
+      </div>
+      <button class="btn" style="margin-top:12px">Add Doctor</button>
+    </form>
+  </details>
+
+  <div class="card" style="padding:0">
+    <table>
+      <tr><th>Code</th><th>Name</th><th>Dept</th><th>Exp</th><th>Fee</th><th>Time</th><th>Login</th><th></th></tr>
+      {% for d in docs %}
+      <tr><td>{{d.doc_code}}</td><td>{{d.name}}</td><td>{{d.department}}</td>
+        <td>{{d.experience}}y</td><td>₹{{d.fee}}</td><td>{{d.avg_time}}m</td>
+        <td><code>{{d.username}}/doctor123</code></td>
+        <td><a class="btn danger sm" href="/admin/doctors/delete/{{d.id}}" onclick="return confirm('Delete?')">Delete</a></td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>{% endblock %}

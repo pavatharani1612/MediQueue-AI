@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block content %}
+<div class="container" style="max-width:520px">
+  <div class="card">
+    <h2 class="section-title" style="font-size:26px">Login</h2>
+    <form method="post">
+      <label>Role</label>
+      <select name="role">
+        <option value="patient">Patient</option>
+        <option value="doctor">Doctor</option>
+        <option value="admin">Admin</option>
+      </select>
+      <label>Username / Email</label>
+      <input name="username" required/>
+      <label>Password</label>
+      <input type="password" name="password" required/>
+      <button class="btn" style="width:100%;margin-top:14px">Sign In</button>
+    </form>
+    <p style="color:var(--muted);margin-top:14px;font-size:13px">
+      New patient? <a href="/register">Register</a><br/>
+      Demo: <b>admin/admin123</b> · <b>d001/doctor123</b> · <b>patient1@demo.com/patient123</b>
+    </p>
+  </div>
+</div>{% endblock %}

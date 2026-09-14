@@ -1,0 +1,165 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Patient Dashboard</h1>
+  <div class="grid c4">
+    <div class="card gradient-card"><h3 style="margin-top:0">Book Appointment</h3><a class="btn ghost" href="/patient/book">Book Now</a></div>
+    <div class="card"><h3 style="margin-top:0">Live Queue</h3><a class="btn" href="/patient/live">Track Live</a></div>
+    <div class="card"><h3 style="margin-top:0">🔁 Reappointment</h3><a class="btn ghost ripple" href="#reappointment">Book Again</a></div>
+    <div class="card"><h3 style="margin-top:0">History</h3><a class="btn ghost" href="/patient/history">See History</a></div>
+    <div class="card"><h3 style="margin-top:0">Profile</h3><a class="btn ghost ripple" href="/patient/profile">Edit</a></div>
+    <div class="card glass"><h3 style="margin-top:0">💬 My Reviews</h3><a class="btn ripple" href="/patient/feedback">View / Add</a></div>
+  </div>
+
+  <div data-mq-live-root data-mq-url="/api/patient/queue-live" data-mq-interval="8000">
+    <h2 class="section-title" style="margin-top:32px">Live Queue
+      <small style="font-size:13px;color:var(--muted)">· updated <b data-mq-updated>—</b></small></h2>
+    <div id="mq-live-host"></div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:32px">My Appointments</h2>
+  {% set upcoming_statuses = ["Waiting", "InProgress", "Emergency-PendingVerification"] %}
+  {% set ns = namespace(up=0, done=0, other=0) %}
+  {% for a in appts %}
+    {% if a.status in upcoming_statuses %}{% set ns.up = ns.up + 1 %}
+    {% elif a.status == "Completed" %}{% set ns.done = ns.done + 1 %}
+    {% else %}{% set ns.other = ns.other + 1 %}{% endif %}
+  {% endfor %}
+
+  <div class="pd-appts">
+    <div class="pd-group">
+      <div class="pd-group-head">
+        <span class="pd-dot pd-dot-up"></span><h3>Upcoming</h3>
+        <span class="pd-count">{{ ns.up }}</span>
+      </div>
+      {% for a in appts if a.status in upcoming_statuses %}
+      <div class="pd-appt pd-up">
+        <div class="pd-qno"><small>QUEUE</small><b>{{ a.queue_no }}</b></div>
+        <div class="pd-info">
+          <b>{{ a.dname }}</b>
+          <span>{{ a.ddept }}</span>
+        </div>
+        <div class="pd-when"><small>Predicted</small><b>{{ a.predicted_time | ampm }}</b></div>
+        <span class="pill {{ a.status|lower }}">{{ a.status }}</span>
+        <div class="pd-actions">
+          <a class="btn sm ghost ripple" href="/patient/timeline/{{ a.id }}">Timeline</a>
+          <a class="btn sm ghost ripple" href="/patient/appointment/{{ a.id }}/pass">QR Pass</a>
+        </div>
+      </div>
+      {% else %}
+      <p class="pd-empty">No upcoming appointments.</p>
+      {% endfor %}
+    </div>
+
+    <div class="pd-group">
+      <div class="pd-group-head">
+        <span class="pd-dot pd-dot-done"></span><h3>Completed</h3>
+        <span class="pd-count">{{ ns.done }}</span>
+      </div>
+      {% for a in appts if a.status == "Completed" %}
+      <div class="pd-appt pd-done">
+        <div class="pd-qno"><small>QUEUE</small><b>{{ a.queue_no }}</b></div>
+        <div class="pd-info">
+          <b>{{ a.dname }}</b>
+          <span>{{ a.ddept }}</span>
+        </div>
+        <div class="pd-when"><small>Predicted</small><b>{{ a.predicted_time | ampm }}</b></div>
+        <span class="pill {{ a.status|lower }}">{{ a.status }}</span>
+        <div class="pd-actions">
+          <a class="btn sm ghost ripple" href="/patient/timeline/{{ a.id }}">Timeline</a>
+          <a class="btn sm ghost ripple" href="/patient/appointment/{{ a.id }}/pass">QR Pass</a>
+          <a class="btn sm ripple" href="/patient/feedback/{{ a.id }}">Rate</a>
+        </div>
+      </div>
+      {% else %}
+      <p class="pd-empty">No completed appointments yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if ns.other %}
+    <div class="pd-group">
+      <div class="pd-group-head">
+        <span class="pd-dot pd-dot-other"></span><h3>Cancelled / Other</h3>
+        <span class="pd-count">{{ ns.other }}</span>
+      </div>
+      {% for a in appts if a.status not in upcoming_statuses and a.status != "Completed" %}
+      <div class="pd-appt pd-other">
+        <div class="pd-qno"><small>QUEUE</small><b>{{ a.queue_no }}</b></div>
+        <div class="pd-info">
+          <b>{{ a.dname }}</b>
+          <span>{{ a.ddept }}</span>
+        </div>
+        <div class="pd-when"><small>Predicted</small><b>{{ a.predicted_time | ampm }}</b></div>
+        <span class="pill {{ a.status|lower }}">{{ a.status }}</span>
+        <div class="pd-actions">
+          <a class="btn sm ghost ripple" href="/patient/timeline/{{ a.id }}">Timeline</a>
+          <a class="btn sm ghost ripple" href="/patient/appointment/{{ a.id }}/pass">QR Pass</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <h2 class="section-title" id="reappointment" style="margin-top:36px">🔁 Reappointment</h2>
+  <p class="section-sub">Book a follow-up visit with a doctor you've already seen — the booking form opens pre-filled.</p>
+  <div class="grid c3">
+    {% set seen = namespace(ids=[]) %}
+    {% for a in appts if a.status == "Completed" %}
+      {% if a.doctor_id not in seen.ids %}
+      {% set _ = seen.ids.append(a.doctor_id) %}
+      <div class="card pd-rebook">
+        <div class="pd-rebook-head">
+          <b>Dr. {{ a.dname }}</b>
+          <span class="pd-rebook-dept">{{ a.ddept }}</span>
+        </div>
+        <p class="pd-rebook-meta">Last visit: Queue {{ a.queue_no }} · {{ a.predicted_time | ampm }}</p>
+        <a class="btn ripple" style="width:100%"
+           href="/patient/book?department={{ a.ddept | urlencode }}&doctor_id={{ a.doctor_id }}&reason={{ (a.reason or '') | urlencode }}">Book Again</a>
+      </div>
+      {% endif %}
+    {% else %}
+      <p style="color:var(--muted)">No completed appointments yet — reappointment options will appear here after your first visit.</p>
+    {% endfor %}
+  </div>
+
+  <h2 class="section-title" style="margin-top:32px">Notifications</h2>
+  <div class="grid c2">
+    {% for n in notifs %}
+    <div class="card"><b>{{n.title}}</b><p style="color:var(--muted);margin:6px 0 0">{{n.message}}</p></div>
+    {% else %}<p style="color:var(--muted)">No notifications yet.</p>{% endfor %}
+  </div>
+</div>
+<style>
+/* ---- My Appointments (UI only) ---- */
+.pd-appts{display:flex;flex-direction:column;gap:20px}
+.pd-group{background:var(--card,#fff);border:1px solid var(--border,#e2e8f0);border-radius:16px;padding:14px 16px}
+.pd-group-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pd-group-head h3{margin:0;font-size:16px}
+.pd-count{background:var(--secondary,#f1f5f9);color:var(--muted,#64748b);border-radius:999px;
+         font-size:12px;font-weight:700;padding:2px 10px}
+.pd-dot{width:9px;height:9px;border-radius:50%}
+.pd-dot-up{background:#2563eb}
+.pd-dot-done{background:#16a34a}
+.pd-dot-other{background:#94a3b8}
+.pd-appt{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;
+         border:1px solid var(--border,#e2e8f0);margin-bottom:8px;transition:.2s var(--ease,ease)}
+.pd-appt:hover{box-shadow:0 6px 16px rgba(15,23,42,.07);transform:translateY(-1px)}
+.pd-appt.pd-up{border-left:4px solid #2563eb}
+.pd-appt.pd-done{border-left:4px solid #16a34a}
+.pd-appt.pd-other{border-left:4px solid #94a3b8;opacity:.85}
+.pd-qno{text-align:center;min-width:56px;background:var(--secondary,#f1f5f9);border-radius:10px;padding:6px 8px}
+.pd-qno small{display:block;font-size:10px;letter-spacing:.06em;color:var(--muted,#64748b);font-weight:700}
+.pd-qno b{font-size:18px}
+.pd-info{flex:1;min-width:140px;display:flex;flex-direction:column}
+.pd-info span{color:var(--muted,#64748b);font-size:13px}
+.pd-when small{display:block;font-size:11px;color:var(--muted,#64748b)}
+.pd-actions{display:flex;gap:6px;flex-wrap:wrap}
+.pd-empty{color:var(--muted,#64748b);margin:4px 0 8px}
+/* ---- Reappointment ---- */
+.pd-rebook{display:flex;flex-direction:column;gap:10px}
+.pd-rebook-head{display:flex;flex-direction:column}
+.pd-rebook-dept{color:var(--muted,#64748b);font-size:13px}
+.pd-rebook-meta{color:var(--muted,#64748b);font-size:13px;margin:0}
+@media(max-width:640px){.pd-appt{gap:10px}.pd-when{width:100%}}
+</style>
+{% endblock %}

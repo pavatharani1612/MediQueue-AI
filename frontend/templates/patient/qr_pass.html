@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}My QR Pass · MediQueue AI{% endblock %}
+{% block content %}
+<div class="qrfs">
+  <div class="qrfs-head">
+    <div class="qrfs-brand">
+      <span class="qrfs-logo">✚</span>
+      <div>
+        <b>{{ HOSPITAL_NAME or CFG.HOSPITAL_NAME }}</b>
+        <small>Appointment QR Pass</small>
+      </div>
+    </div>
+    <span class="status-pill st-{{ (a.checkin_status or 'Booked')|lower|replace(' ','-') }}">
+      {{ a.checkin_status or 'Booked' }}</span>
+  </div>
+
+  <div class="qrfs-body">
+    <div class="qrfs-qr">
+      <div class="qrfs-qr-inner">{{ qr_svg | safe }}</div>
+      <div class="qrfs-token">{{ a.qr_token }}</div>
+      <div class="qrfs-barcode">{{ barcode_svg | safe }}<code>{{ barcode }}</code></div>
+    </div>
+
+    <div class="qrfs-info">
+      <div class="qrfs-grid">
+        <div><small>Patient</small><b>{{ a.pname }}</b></div>
+        <div><small>Appointment ID</small><b>#{{ a.id }}</b></div>
+        <div><small>Department</small><b>{{ a.ddept }}</b></div>
+        <div><small>Doctor</small><b>Dr {{ a.dname }}</b></div>
+        <div><small>Date</small><b>{{ a.appt_date }}</b></div>
+        <div><small>Time</small><b>{{ (a.appt_time or a.slot_time or a.predicted_time) | ampm }}</b></div>
+        <div><small>Queue Number</small><b class="qrfs-queue">{{ a.queue_no }}</b></div>
+        <div><small>Status</small><b>{{ a.checkin_status or 'Booked' }}</b></div>
+        <div><small>Hospital ID</small><b>{{ payload.hospital_id }}</b></div>
+        <div><small>QR Validity</small><b>{{ qr_status }}</b></div>
+      </div>
+
+      <div class="qrfs-note">
+        <b>Instructions</b>
+        <ol>
+          <li>Reach the hospital 10 minutes before your slot time.</li>
+          <li>Show this QR at the <b>Check-In</b> desk — the admin scans it to check you in.</li>
+          <li>Wait for your token; the queue updates automatically.</li>
+          <li>Show the same QR again at the doctor's room to start your consultation.</li>
+          <li>Do not share this pass — it is unique to your appointment.</li>
+        </ol>
+      </div>
+
+      <div class="qrfs-actions no-print">
+        <a class="btn" href="/patient/appointment/{{ a.id }}/qr.png">Download PNG</a>
+        <button class="btn ghost" type="button" onclick="window.print()">Print Pass</button>
+        <a class="btn ghost" href="/patient/queue">Back to Queue</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Appointments</h1>
+  <div class="card" style="padding:0"><table>
+    <tr><th>Queue</th><th>Patient</th><th>Doctor</th><th>Dept</th><th>Priority</th><th>Date</th><th>Predicted</th><th>Status</th></tr>
+    {% for r in rows %}
+    <tr class="{% if r.priority=='Emergency' and r.emergency_verified %}row-emergency{% elif r.priority=='Emergency' %}row-pending{% elif r.priority=='Urgent' %}row-urgent{% elif r.priority=='Normal' %}row-normal{% endif %}">
+      <td>{{r.queue_no}}</td><td>{{r.pname}}</td><td>{{r.dname}}</td>
+      <td>{{r.department}}</td>
+      <td>{% if r.priority=='Emergency' and r.emergency_verified %}🔴 Emergency
+          {% elif r.priority=='Emergency' %}⏳ Pending
+          {% elif r.priority=='Urgent' %}🟠 Urgent
+          {% else %}🟢 Normal{% endif %}</td>
+      <td>{{r.appt_date}}</td><td>{{ r.predicted_time | ampm }}</td>
+      <td><span class="pill {{r.status|lower}}">{{r.status}}</span></td></tr>{% endfor %}
+  </table></div>
+</div>
+<style>
+.row-emergency{background:#fee2e2}.row-pending{background:#fef3c7}
+.row-urgent{background:#ffedd5}.row-normal{background:#dcfce7}
+</style>
+{% endblock %}

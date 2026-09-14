@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}My Reviews — MediQueue AI{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 class="section-title">💬 My Reviews</h1>
+
+  {% if pending %}
+  <div class="card glass" style="border-left:5px solid #38bdf8">
+    <h3 style="margin-top:0">Awaiting Your Feedback</h3>
+    <div class="grid c2">
+    {% for p in pending %}
+      <div class="card">
+        <b>{{ p.dname }}</b> <small>({{ p.ddept }})</small><br/>
+        <small>Queue {{ p.queue_no }}</small>
+        <a class="btn sm ripple" style="margin-top:8px;display:inline-block"
+           href="{{ url_for('patient_feedback', appt_id=p.id) }}">Rate Now</a>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <h2 class="section-title" style="margin-top:26px">Submitted Reviews</h2>
+  <div class="grid c2">
+    {% for r in rows %}
+    <div class="card glass review-card" data-anim="fade-up">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <b>{{ r.dname }}</b>
+          <small style="color:var(--muted)"> · {{ r.ddept }}</small>
+        </div>
+        <div class="stars-static">{{ '★' * r.rating }}<span style="color:#e2e8f0">{{ '★' * (5-r.rating) }}</span></div>
+      </div>
+      <p style="color:var(--muted);margin:8px 0 4px;font-size:13px">
+        Doctor {{ r.doctor_rating }}★ · Hospital {{ r.hospital_rating }}★ ·
+        {{ r.created_at[:10] }}
+      </p>
+      {% if r.review %}<p style="margin:8px 0 0">{{ r.review }}</p>{% endif %}
+    </div>
+    {% else %}
+    <p style="color:var(--muted)">No reviews yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.review-card{transition:transform .25s var(--ease),box-shadow .25s}
+.review-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(37,99,235,.15)}
+.stars-static{color:#f59e0b;font-size:18px;letter-spacing:2px}
+</style>
+{% endblock %}

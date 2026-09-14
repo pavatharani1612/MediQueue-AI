@@ -1,0 +1,36 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Our Doctors</h1>
+  <p class="section-sub">Hover on any card to reveal availability.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
+    <a class="btn ghost sm" href="/doctors">All</a>
+    {% for d in depts %}
+      <a class="btn ghost sm" href="/doctors?dept={{d.name}}"
+         style="{% if dept==d.name %}background:var(--grad);color:#fff{% endif %}">{{d.name}}</a>
+    {% endfor %}
+  </div>
+
+  <div class="grid c3">
+    {% for d in docs %}
+    <div class="doc">
+      <div class="doc-inner">
+        <div class="doc-face">
+          <div class="avatar">{{ d.name.split()[1][0] }}{{ d.name.split()[2][0] if d.name.split()|length>2 else '' }}</div>
+          <h4>{{ d.name }}</h4>
+          <small>{{ d.qualification }}</small>
+          <p style="color:var(--muted);margin:8px 0 0">🏥 {{ d.department }}<br/>💼 {{ d.experience }} yrs · ₹{{ d.fee }}</p>
+        </div>
+        <div class="doc-back">
+          <h4 style="color:#fff">{{ d.name }}</h4>
+          <p>Consultation: <b>{{ d.avg_time }} min</b></p>
+          <p>Specialization: {{ d.specialization }}</p>
+          <p>Status: <b>{{ 'Available' if d.available else 'Unavailable' }}</b></p>
+          {% if session.get('role')=='patient' %}
+          <a class="btn ghost sm" href="/patient/book">Book Now</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>{% endblock %}

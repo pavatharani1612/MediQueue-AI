@@ -1,0 +1,138 @@
+/* MediQueue AI - Enterprise UI layer (additive; existing styles untouched) */
+:root{--mq-ink:#0f172a;--mq-line:#e2e8f0;--mq-sky:#0ea5e9;--mq-ok:#16a34a;--mq-bad:#dc2626;--mq-warn:#d97706;--mq-card:rgba(255,255,255,.78)}
+.mq-page{padding:26px 20px 48px}
+.mq-head{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-end;margin-bottom:18px}
+.mq-title{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.mq-sub{margin:6px 0 0;color:#64748b;font-size:14px}
+.mq-card{background:var(--mq-card);backdrop-filter:blur(14px);border:1px solid var(--mq-line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(15,23,42,.06);margin-bottom:18px;animation:mq-rise .35s ease both}
+@keyframes mq-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.mq-card-title{margin:0 0 12px;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#475569}
+.mq-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+.mq-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:18px}
+.mq-stat{background:var(--mq-card);border:1px solid var(--mq-line);border-radius:14px;padding:14px;transition:transform .18s ease,box-shadow .18s ease}
+.mq-stat:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(15,23,42,.1)}
+.mq-stat small{display:block;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.mq-stat b{font-size:24px;font-weight:800}
+.mq-kpis{display:flex;gap:12px}.mq-kpi{background:var(--mq-card);border:1px solid var(--mq-line);border-radius:12px;padding:10px 14px;text-align:center}
+.mq-kpi span{display:block;font-size:22px;font-weight:800}.mq-kpi small{color:#64748b;font-size:11px}
+.mq-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.mq-field{display:block;margin-bottom:12px;font-size:13px;color:#475569;font-weight:600}
+.mq-field .input{margin-top:6px;width:100%}
+.mq-table-wrap{overflow:auto;border:1px solid var(--mq-line);border-radius:12px}
+.mq-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+.mq-table th{position:sticky;top:0;background:#f1f5f9;text-align:left;padding:10px;font-weight:700;color:#334155;white-space:nowrap}
+.mq-table td{padding:10px;border-top:1px solid var(--mq-line);vertical-align:top}
+.mq-table tbody tr:hover{background:#f8fafc}
+.mq-empty{text-align:center;color:#94a3b8;padding:18px}
+.mq-badge{display:inline-block;padding:3px 9px;border-radius:999px;background:#e2e8f0;color:#334155;font-size:11px;font-weight:700}
+.mq-badge.ok{background:#dcfce7;color:#166534}.mq-badge.bad{background:#fee2e2;color:#991b1b}
+.mq-old{color:#b91c1c}.mq-new{color:#15803d;font-weight:600}
+.mq-hint{color:#94a3b8;font-size:12px;margin:8px 0 0}
+.mq-pager{display:flex;gap:12px;align-items:center;margin-top:12px}
+.mq-scanner{position:relative;background:#0f172a;border-radius:14px;overflow:hidden;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.mq-scanner video{width:100%;height:100%;object-fit:cover}
+.mq-scan-line{position:absolute;left:6%;right:6%;height:2px;background:linear-gradient(90deg,transparent,#0ea5e9,transparent);animation:mq-scan 2.2s linear infinite}
+@keyframes mq-scan{0%{top:12%}50%{top:86%}100%{top:12%}}
+.mq-result{margin-top:14px;padding:12px 14px;border-radius:12px;border:1px solid var(--mq-line);font-size:14px}
+.mq-result.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.mq-result.bad{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.mq-result.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.mq-pass{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+.mq-pass-qr svg{width:220px;height:220px;background:#fff;border-radius:12px;padding:8px;border:1px solid var(--mq-line)}
+.mq-pass-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.mq-pass-info small{display:block;color:#64748b;font-size:11px;text-transform:uppercase}
+.mq-pass-barcode{grid-column:1/-1;text-align:center}.mq-pass-barcode svg{max-width:320px}
+.mq-slot{border:1px solid var(--mq-line);border-radius:10px;padding:8px 12px;background:#fff;cursor:pointer;font-size:13px;font-weight:600}
+.mq-slot[disabled],.mq-slot.taken,.mq-slot.past{opacity:.42;cursor:not-allowed;text-decoration:line-through}
+.mq-slot.selected{border-color:var(--mq-sky);box-shadow:0 0 0 3px rgba(14,165,233,.18)}
+@media(max-width:720px){.mq-pass{grid-template-columns:1fr}.mq-title{font-size:22px}}
+@media print{.nav,.emerg,footer,.no-print,.orb,#loader{display:none!important}.mq-card{box-shadow:none}}
+body.mq-dark{background:#0b1220;color:#e2e8f0}
+body.mq-dark .mq-card,body.mq-dark .mq-stat,body.mq-dark .mq-kpi{background:rgba(17,25,40,.85);border-color:#1e293b}
+body.mq-dark .mq-table{background:#0f172a;color:#e2e8f0}
+body.mq-dark .mq-table th{background:#111827;color:#cbd5e1}
+body.mq-dark .mq-table tbody tr:hover{background:#111c31}
+
+/* ============================================================
+   MediQueue AI — status pills, two-level scanner, full-screen QR pass
+   (additive only: no existing colours, layout or theme changed)
+   ============================================================ */
+.status-pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;
+  font-weight:700;letter-spacing:.02em;border:1px solid transparent;white-space:nowrap}
+.st-booked{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.st-checked-in{background:#ecfeff;color:#0e7490;border-color:#a5f3fc}
+.st-waiting{background:#fffbeb;color:#b45309;border-color:#fde68a}
+.st-consultation-started,.st-consulting{background:#f5f3ff;color:#6d28d9;border-color:#ddd6fe}
+.st-completed{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+.st-cancelled,.st-no-show,.st-expired{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+
+/* --- scanner mode switch --- */
+.mq-modes{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f1f5f9;
+  padding:5px;border-radius:12px;margin-bottom:12px}
+.mq-mode{border:0;background:transparent;padding:10px 8px;border-radius:9px;font-weight:700;
+  font-size:13px;color:#475569;cursor:pointer;transition:.2s ease}
+.mq-mode.active{background:#fff;color:#1d4ed8;box-shadow:0 2px 8px rgba(15,23,42,.10)}
+.mq-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:16px;
+  font-size:12px;color:#64748b}
+.mq-result.warn{border-color:#fde68a;background:#fffbeb;color:#92400e}
+.mq-scanner{position:relative;overflow:hidden;border-radius:14px;background:#0f172a;aspect-ratio:4/3}
+.mq-scanner video{width:100%;height:100%;object-fit:cover;display:block}
+.mq-scan-line{position:absolute;left:8%;right:8%;height:2px;background:#38bdf8;
+  box-shadow:0 0 12px #38bdf8;animation:mqScan 2.4s linear infinite}
+@keyframes mqScan{0%{top:12%}50%{top:86%}100%{top:12%}}
+
+/* --- full-screen QR pass --- */
+.qrfs{min-height:calc(100vh - 60px);display:flex;flex-direction:column;gap:18px;
+  padding:24px clamp(14px,4vw,44px);background:linear-gradient(180deg,#f8fbff,#eef4fb)}
+.qrfs-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px}
+.qrfs-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.qrfs-logo{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:18px;
+  background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;font-size:30px;font-weight:800;
+  box-shadow:0 10px 24px rgba(37,99,235,.32)}
+.qrfs-brand b{display:block;font-size:clamp(18px,2.4vw,26px);line-height:1.2}
+.qrfs-brand small{color:#64748b;font-weight:600}
+.qrfs-body{flex:1;display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:22px}
+.qrfs-qr{background:#fff;border-radius:22px;padding:26px;text-align:center;
+  box-shadow:0 18px 40px rgba(15,23,42,.10);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px}
+.qrfs-qr-inner{width:min(360px,72vw)}
+.qrfs-qr-inner svg,.qrfs-qr-inner img{width:100%;height:auto;display:block}
+.qrfs-token{font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:700;
+  letter-spacing:.06em;color:#0f172a;word-break:break-all}
+.qrfs-barcode{width:100%}
+.qrfs-barcode svg{width:100%;height:70px}
+.qrfs-barcode code{font-size:12px;color:#64748b}
+.qrfs-info{background:#fff;border-radius:22px;padding:26px;box-shadow:0 18px 40px rgba(15,23,42,.10)}
+.qrfs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+.qrfs-grid small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8}
+.qrfs-grid b{font-size:16px;color:#0f172a}
+.qrfs-queue{font-size:26px!important;color:#1d4ed8!important}
+.qrfs-note{margin-top:20px;padding:16px;border-radius:14px;background:#f8fafc;border:1px dashed #cbd5e1}
+.qrfs-note ol{margin:8px 0 0 18px;color:#475569;font-size:13px;line-height:1.7}
+.qrfs-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+@media(max-width:900px){.qrfs-body{grid-template-columns:1fr}}
+@media print{.nav,.emerg,footer,.no-print{display:none!important}
+  .qrfs{background:#fff;padding:0}.qrfs-qr,.qrfs-info{box-shadow:none}}
+
+/* ---------------- Admin QR image upload check-in ---------------- */
+.mq-upload{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;text-align:center;cursor:pointer;padding:28px 18px;margin-top:14px;
+  border:2px dashed var(--mq-line,#dbe3ef);border-radius:14px;background:#f8fafc;
+  transition:border-color .18s ease,background .18s ease}
+.mq-upload:hover,.mq-upload.is-over{border-color:#2563eb;background:#eff6ff}
+.mq-upload-icon{font-size:26px;line-height:1}
+.mq-upload-title{font-weight:700;font-size:15px}
+.mq-upload-sub{font-size:13px;opacity:.75}
+.mq-upload-formats{font-size:12px;opacity:.6;margin-top:4px}
+.mq-qr-preview{margin-top:14px;display:flex;justify-content:center}
+.mq-qr-preview img{max-width:220px;width:100%;height:auto;border-radius:12px;
+  border:1px solid var(--mq-line,#dbe3ef);background:#fff;padding:8px}
+.mq-detail-card{margin-top:14px;padding:14px;border-radius:14px;
+  border:1px solid var(--mq-line,#dbe3ef);background:#fff}
+.mq-detail-row{display:flex;justify-content:space-between;gap:12px;
+  padding:7px 0;border-bottom:1px dashed var(--mq-line,#e8edf5);font-size:14px}
+.mq-detail-row:last-child{border-bottom:0}
+.mq-detail-row span{opacity:.7}
+.mq-detail-row b{text-align:right;word-break:break-word}
+@media(max-width:560px){.mq-upload{padding:22px 12px}.mq-detail-row{flex-direction:column;gap:2px}
+  .mq-detail-row b{text-align:left}}

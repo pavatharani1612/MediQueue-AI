@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Frequently Asked Questions</h1>
+  {% for q,a in [
+    ("How does the AI predict my waiting time?","A Random Forest model trained on 500 samples uses department, current queue size, delays and priority to predict wait time in minutes."),
+    ("Can I choose a time slot?","No — MediQueue AI automatically assigns the best time based on live queue analysis. This keeps waiting minimal."),
+    ("What happens if I'm late?","If you notify the hospital, the doctor waits and the queue recalculates. Otherwise the appointment is marked Missed and you can request re-appointment."),
+    ("Will I get emails?","Yes — for registration, booking, 10-min reminder, delays, cancellations and completion."),
+    ("Is my data safe?","Passwords are hashed. Sessions are role-based. SQL uses parameterised queries.")
+  ] %}
+  <div class="card" style="margin-bottom:14px">
+    <h3 style="margin:0;color:var(--deep)">{{q}}</h3>
+    <p style="color:var(--muted);margin:8px 0 0">{{a}}</p>
+  </div>
+  {% endfor %}
+</div>{% endblock %}

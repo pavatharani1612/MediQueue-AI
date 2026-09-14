@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h2 class="mq-title">Audit Logs</h2>
+      <p class="mq-sub">{{ total }} recorded administrative activities — permanent and append-only.</p>
+    </div>
+    <form class="mq-row" method="get">
+      <input class="input" name="action" value="{{ action }}" placeholder="Filter action e.g. QR Scan" />
+      <button class="btn sm" type="submit">Filter</button>
+    </form>
+  </div>
+
+  <section class="mq-card">
+    <h3 class="mq-card-title">Activity Trail</h3>
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>#</th><th>Admin</th><th>Action</th><th>Entity</th><th>Details</th><th>Date</th><th>Time</th><th>Browser</th><th>Device</th><th>IP</th></tr></thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.actor_name }} <small class="mq-hint">({{ r.actor_role }})</small></td>
+            <td><span class="mq-badge">{{ r.action }}</span></td>
+            <td>{{ r.entity }}{% if r.entity_id %} #{{ r.entity_id }}{% endif %}</td>
+            <td>{{ r.details }}</td>
+            <td>{{ r.date }}</td>
+            <td>{{ r.time }}</td>
+            <td>{{ r.browser }}</td>
+            <td>{{ r.device }}</td>
+            <td>{{ r.ip_address }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="10" class="mq-empty">No activity recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% set pages = ((total // per_page) + (1 if total % per_page else 0)) or 1 %}
+    <div class="mq-pager">
+      {% if page > 1 %}<a class="btn ghost sm" href="?page={{ page-1 }}&action={{ action }}">← Previous</a>{% endif %}
+      <span class="mq-hint">Page {{ page }} of {{ pages }}</span>
+      {% if page < pages %}<a class="btn ghost sm" href="?page={{ page+1 }}&action={{ action }}">Next →</a>{% endif %}
+    </div>
+  </section>
+
+  <section class="mq-card">
+    <h3 class="mq-card-title">Login History</h3>
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>User</th><th>Role</th><th>Event</th><th>Date</th><th>Time</th><th>Browser</th><th>Device</th><th>IP</th></tr></thead>
+        <tbody>
+          {% for r in logins %}
+          <tr>
+            <td>{{ r.username }}</td><td>{{ r.role }}</td>
+            <td><span class="mq-badge {{ 'ok' if r.event=='login' else '' }}">{{ r.event }}</span></td>
+            <td>{{ r.date }}</td><td>{{ r.time }}</td>
+            <td>{{ r.browser }}</td><td>{{ r.device }}</td><td>{{ r.ip_address }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="mq-empty">No logins recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

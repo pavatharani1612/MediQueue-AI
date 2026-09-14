@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Feedback Analytics — Admin{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 class="section-title">⭐ Feedback Analytics</h1>
+
+  <div class="grid c4">
+    <div class="card stat glass"><div class="num" data-count="{{ total }}">0</div>
+      <div class="lbl">Total Reviews</div></div>
+    <div class="card stat glass"><div class="num">{{ avg }}★</div>
+      <div class="lbl">Average Rating</div></div>
+    <div class="card stat glass"><div class="num">{{ avg_doc }}★</div>
+      <div class="lbl">Doctor Behaviour</div></div>
+    <div class="card stat glass"><div class="num">{{ avg_hos }}★</div>
+      <div class="lbl">Hospital Experience</div></div>
+  </div>
+
+  <div class="grid c2" style="margin-top:22px">
+    <div class="card glass">
+      <h3 style="margin-top:0">Rating Distribution</h3>
+      {% for i in range(5,0,-1) %}
+        {% set c = dist[i] %}
+        {% set pct = (c*100//total) if total else 0 %}
+        <div style="display:flex;align-items:center;gap:10px;margin:6px 0">
+          <div style="width:36px;color:#f59e0b;font-weight:700">{{ i }}★</div>
+          <div style="flex:1;height:12px;background:#eef2f7;border-radius:8px;overflow:hidden">
+            <div style="width:{{ pct }}%;height:100%;
+                        background:linear-gradient(90deg,#2563eb,#38bdf8);
+                        transition:width .6s var(--ease)"></div>
+          </div>
+          <div style="width:48px;text-align:right;color:var(--muted)">{{ c }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="card glass">
+      <h3 style="margin-top:0">Top Doctors by Rating</h3>
+      <table style="width:100%">
+        <tr><th>Doctor</th><th>Dept</th><th>Reviews</th><th>Avg</th></tr>
+        {% for d in by_doc %}
+        <tr><td>{{ d.name }}</td><td>{{ d.department }}</td>
+            <td>{{ d.c }}</td>
+            <td><b style="color:#f59e0b">{{ d.avg_r }}★</b></td></tr>
+        {% else %}<tr><td colspan="4" style="color:var(--muted)">No reviews yet</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:26px">Recent Reviews</h2>
+  <div class="grid c2">
+    {% for r in recent %}
+    <div class="card glass">
+      <div style="display:flex;justify-content:space-between;gap:8px">
+        <div><b>{{ r.pname }}</b><br/>
+          <small style="color:var(--muted)">→ {{ r.dname }} · {{ r.ddept }}</small></div>
+        <div style="color:#f59e0b;font-size:18px;letter-spacing:2px">{{ '★'*r.rating }}</div>
+      </div>
+      {% if r.review %}<p style="margin:8px 0 0">{{ r.review }}</p>{% endif %}
+      <small style="color:var(--muted)">{{ r.created_at[:16] }}</small>
+    </div>
+    {% else %}<p style="color:var(--muted)">No reviews yet.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

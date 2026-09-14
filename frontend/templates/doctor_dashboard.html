@@ -1,0 +1,338 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Doctor Dashboard</h1>
+  <p class="section-sub">Welcome, {{session.name}}</p>
+
+  <div class="grid c4">
+    <div class="card stat" style="border-left:5px solid #ef4444">
+      <div class="num" data-count="{{stats.emergency}}">0</div><div class="lbl">🔴 Emergency</div></div>
+    <div class="card stat" style="border-left:5px solid #f59e0b">
+      <div class="num" data-count="{{stats.urgent}}">0</div><div class="lbl">🟠 Urgent</div></div>
+    <div class="card stat" style="border-left:5px solid #22c55e">
+      <div class="num" data-count="{{stats.normal}}">0</div><div class="lbl">🟢 Normal</div></div>
+    <div class="card stat"><div class="num" data-count="{{stats.done}}">0</div><div class="lbl">Completed</div></div>
+  </div>
+
+  <div class="card glass doc-fb" style="margin-top:20px">
+    <div class="doc-fb-head">
+      <div>
+        <h3 style="margin:0">💬 Feedback from Patients</h3>
+        <div style="color:var(--muted);font-size:13px">What your patients say about their consultation.</div>
+      </div>
+      <div class="doc-fb-actions">
+        <a class="btn ghost sm" href="/doctor/feedback">View all reviews</a>
+        <a class="btn ghost sm" href="/doctor/history">Consultation history</a>
+      </div>
+    </div>
+    <div class="doc-fb-stats">
+      <div class="doc-fb-stat"><span>Total reviews</span><b>{{ fb_total or 0 }}</b></div>
+      <div class="doc-fb-stat"><span>Average rating</span><b>{{ fb_avg or 0 }}★</b></div>
+      <div class="doc-fb-stat"><span>Behaviour score</span><b>{{ fb_avg_d or 0 }}★</b></div>
+    </div>
+    <div class="doc-fb-list">
+      {% for r in fb_rows %}
+      <div class="doc-fb-item">
+        <div class="doc-fb-top">
+          <b>{{ r.pname }}</b>
+          <span class="doc-fb-stars">{{ '★' * (r.rating or 0) }}</span>
+        </div>
+        <small style="color:var(--muted)">Token {{ r.queue_no }} · {{ (r.created_at or '')[:16] }}</small>
+        {% if r.review %}<p style="margin:8px 0 0">{{ r.review }}</p>{% endif %}
+      </div>
+      {% else %}
+      <p style="color:var(--muted);margin:0">No patient feedback yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <style>
+  .doc-fb{padding:20px}
+  .doc-fb-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .doc-fb-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .doc-fb-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+  .doc-fb-stat{padding:12px 14px;border-radius:14px;background:rgba(148,163,184,.10);
+    border:1px solid rgba(148,163,184,.18)}
+  .doc-fb-stat span{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--muted);margin-bottom:4px}
+  .doc-fb-stat b{font-size:20px}
+  .doc-fb-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:16px}
+  .doc-fb-item{padding:14px;border-radius:14px;border:1px solid rgba(148,163,184,.20);background:rgba(255,255,255,.55)}
+  .doc-fb-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .doc-fb-stars{color:#f59e0b;letter-spacing:2px}
+  </style>
+
+  <div class="card gradient-card" style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div>
+      <h3 style="margin:0">⏱ Extend Consultation</h3>
+      <div style="opacity:.9;font-size:13px">Add a delay - every affected patient will be emailed and the queue will recalculate automatically.</div>
+    </div>
+    <button type="button" class="btn ghost" id="openDelayBtn">Add Delay</button>
+  </div>
+
+  <!-- DELAY MODAL -->
+  <div id="delayModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:9999;align-items:center;justify-content:center">
+    <div class="card" style="max-width:520px;width:92%;padding:22px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Add Delay</h3>
+        <button type="button" class="btn sm" style="background:#64748b" id="closeDelayBtn">✕</button>
+      </div>
+      <div id="delayError" style="display:none;margin-top:10px;padding:10px;background:#fee2e2;border:1px solid #fecaca;border-radius:8px;color:#b91c1c;font-size:13px"></div>
+      <form id="delayForm" method="post" action="/doctor/delay" style="margin-top:12px">
+        <label>Delay Duration <span style="color:#ef4444">*</span></label>
+        <select name="minutes" id="delayMinutes" required onchange="document.getElementById('customBox').style.display=this.value=='custom'?'block':'none'">
+          <option value="">-- Select duration --</option>
+          <option value="5">5 Minutes</option>
+          <option value="10">10 Minutes</option>
+          <option value="15">15 Minutes</option>
+          <option value="20">20 Minutes</option>
+          <option value="30">30 Minutes</option>
+          <option value="custom">Custom Minutes</option>
+        </select>
+        <div id="customBox" style="display:none;margin-top:8px">
+          <label>Custom Minutes</label>
+          <input type="number" name="custom_minutes" min="1" max="240" placeholder="Minutes"/>
+        </div>
+
+        <label style="margin-top:10px">Delay Reason <span style="color:#ef4444">*</span></label>
+        <select name="reason" id="delayReason" required onchange="document.getElementById('reasonOtherBox').style.display=this.value=='Other'?'block':'none'">
+          <option value="">-- Select reason --</option>
+          <option>Emergency Patient</option>
+          <option>Surgery</option>
+          <option>Medical Procedure</option>
+          <option>Personal Break</option>
+          <option>Equipment Issue</option>
+          <option>Other</option>
+        </select>
+        <div id="reasonOtherBox" style="display:none;margin-top:8px">
+          <input name="reason_other" placeholder="Specify reason"/>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
+          <button type="button" class="btn sm" style="background:#64748b" id="cancelDelayBtn">Cancel</button>
+          <button type="submit" class="btn green sm" id="confirmDelayBtn">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  {% macro action_cell(a) %}
+    <td style="display:flex;gap:6px;flex-wrap:wrap">
+      {% if a.status=='Emergency-PendingVerification' %}
+        <a class="btn green sm" href="/doctor/emergency/{{a.id}}/approve">Approve</a>
+        <a class="btn danger sm" href="/doctor/emergency/{{a.id}}/reject?new_priority=Urgent">Reject→Urgent</a>
+        <a class="btn sm" href="/doctor/emergency/{{a.id}}/reject?new_priority=Normal" style="background:#64748b">Reject→Normal</a>
+      {% endif %}
+      {% if a.status=='Waiting' %}
+        <a class="btn sm" href="/doctor/action/{{a.id}}/start">Consult Now</a>
+      {% endif %}
+      {% if a.status=='InProgress' %}
+        <a class="btn green sm" href="/doctor/action/{{a.id}}/complete">Complete</a>
+      {% endif %}
+      {% if a.status=='Waiting' %}
+        <a class="btn sm" style="background:#f59e0b" href="/doctor/action/{{a.id}}/missed">Mark Missed</a>
+      {% endif %}
+      {% if a.status in ['Waiting','InProgress','Emergency-PendingVerification'] %}
+        <a class="btn danger sm" href="/doctor/action/{{a.id}}/cancel">Cancel</a>
+      {% endif %}
+    </td>
+  {% endmacro %}
+
+  {% macro queue_row(a, cls) %}
+    <tr class="{{cls}}">
+      <td><b>{{a.queue_no}}</b></td>
+      <td>{{a.patient_name}} <small>({{a.age or '—'}})</small><br/><small>{{a.phone}}</small></td>
+      <td>{{a.reason}}
+        {% if a.emergency_symptoms %}<br/><small><b>Symptoms:</b> {{a.emergency_symptoms}}</small>{% endif %}
+        {% if a.emergency_reason %}<br/><small><b>Reason:</b> {{a.emergency_reason}}</small>{% endif %}
+      </td>
+      <td>
+        {% if a.priority=='Emergency' and a.emergency_verified %}<span class="pill" style="background:#ef4444;color:#fff">🔴 Emergency</span>
+        {% elif a.priority=='Emergency' %}<span class="pill" style="background:#fbbf24;color:#000">⏳ Pending</span>
+        {% elif a.priority=='Urgent' %}<span class="pill" style="background:#f59e0b;color:#fff">🟠 Urgent</span>
+        {% else %}<span class="pill" style="background:#22c55e;color:#fff">🟢 Normal</span>{% endif %}
+      </td>
+      <td>{{ a.predicted_time | ampm }}</td>
+      <td><span class="pill">{{a.status}}</span></td>
+      {{ action_cell(a) }}
+    </tr>
+  {% endmacro %}
+
+  <!-- EMERGENCY -->
+  <h2 class="section-title" style="margin-top:32px;color:#b91c1c">
+    🚨 Emergency Queue <span class="pill" style="background:#ef4444;color:#fff">{{stats.emergency}}</span>
+  </h2>
+  <div class="card" style="padding:0;border:2px solid #ef4444">
+    <table>
+      <tr><th>Token</th><th>Patient</th><th>Reason / Symptoms</th><th>Priority</th><th>Wait</th><th>Status</th><th>Actions</th></tr>
+      {% for a in emergency_pending %}{{ queue_row(a, 'row-pending') }}{% endfor %}
+      {% for a in emergency_verified %}{{ queue_row(a, 'row-emergency') }}{% endfor %}
+      {% if not emergency_pending and not emergency_verified %}
+        <tr><td colspan="7" style="text-align:center;color:var(--muted)">No emergency patients</td></tr>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- URGENT -->
+  <h2 class="section-title" style="margin-top:28px;color:#b45309">
+    🟠 Urgent Queue <span class="pill" style="background:#f59e0b;color:#fff">{{stats.urgent}}</span>
+  </h2>
+  <div class="card" style="padding:0">
+    <table>
+      <tr><th>Token</th><th>Patient</th><th>Reason</th><th>Priority</th><th>Wait</th><th>Status</th><th>Actions</th></tr>
+      {% for a in urgent_q %}{{ queue_row(a, 'row-urgent') }}
+      {% else %}<tr><td colspan="7" style="text-align:center;color:var(--muted)">No urgent patients</td></tr>{% endfor %}
+    </table>
+  </div>
+
+  <!-- NORMAL -->
+  <h2 class="section-title" style="margin-top:28px;color:#166534">
+    🟢 Normal Queue <span class="pill" style="background:#22c55e;color:#fff">{{stats.normal}}</span>
+  </h2>
+  <div class="card" style="padding:0">
+    <table>
+      <tr><th>Token</th><th>Patient</th><th>Reason</th><th>Priority</th><th>Wait</th><th>Status</th><th>Actions</th></tr>
+      {% for a in normal_q %}{{ queue_row(a, 'row-normal') }}
+      {% else %}<tr><td colspan="7" style="text-align:center;color:var(--muted)">No normal patients</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+
+<style>
+.row-emergency{background:#fee2e2 !important}
+.row-pending{background:#fef3c7 !important}
+.row-urgent{background:#ffedd5 !important}
+.row-normal{background:#dcfce7 !important}
+</style>
+
+<div class="container" style="margin-top:20px"><div class="card"><h2 style="margin:0 0 8px">📥 Waiting 5 Minutes Requests</h2><p style="color:var(--muted)">Approve or reject patient +5 min delay requests.</p><a class="btn sm" href="/doctor/requests">Open Requests Panel</a></div></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ---- Emergency alert on load ----
+{% if emergency_pending %}
+setTimeout(()=>{
+  alert("🚨 {{emergency_pending|length}} emergency request(s) awaiting your verification!");
+},400);
+{% endif %}
+
+// ---- Delay modal ----
+const _dm = document.getElementById('delayModal');
+document.getElementById('openDelayBtn').onclick = () => { _dm.style.display='flex'; };
+document.getElementById('closeDelayBtn').onclick = () => { _dm.style.display='none'; };
+document.getElementById('cancelDelayBtn').onclick = () => { _dm.style.display='none'; };
+_dm.addEventListener('click', e => { if (e.target === _dm) _dm.style.display='none'; });
+
+document.getElementById('delayForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const err = document.getElementById('delayError');
+  err.style.display='none';
+  const fd = new FormData(this);
+  const btn = document.getElementById('confirmDelayBtn');
+  btn.disabled = true; btn.textContent = 'Applying...';
+  try {
+    const res = await fetch('/doctor/delay', {
+      method:'POST', body: fd,
+      headers: {'X-Requested-With':'XMLHttpRequest'}
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) throw new Error(data.error || 'Failed');
+    _dm.style.display='none';
+    this.reset();
+    document.getElementById('customBox').style.display='none';
+    document.getElementById('reasonOtherBox').style.display='none';
+    await refreshQueue();
+    alert('Delay applied ('+data.minutes+' min). '+data.affected+' patient(s) notified.');
+  } catch(ex) {
+    err.textContent = ex.message || 'Error applying delay.';
+    err.style.display='block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirm';
+  }
+});
+
+// ---- Live queue auto-refresh (no page reload) ----
+function priorityPill(a){
+  if (a.priority==='Emergency' && a.emergency_verified) return '<span class="pill" style="background:#ef4444;color:#fff">🔴 Emergency</span>';
+  if (a.priority==='Emergency') return '<span class="pill" style="background:#fbbf24;color:#000">⏳ Pending</span>';
+  if (a.priority==='Urgent') return '<span class="pill" style="background:#f59e0b;color:#fff">🟠 Urgent</span>';
+  return '<span class="pill" style="background:#22c55e;color:#fff">🟢 Normal</span>';
+}
+function actionCell(a){
+  const b = [];
+  if (a.status==='Emergency-PendingVerification'){
+    b.push(`<a class="btn green sm" href="/doctor/emergency/${a.id}/approve">Approve</a>`);
+    b.push(`<a class="btn danger sm" href="/doctor/emergency/${a.id}/reject?new_priority=Urgent">Reject→Urgent</a>`);
+    b.push(`<a class="btn sm" style="background:#64748b" href="/doctor/emergency/${a.id}/reject?new_priority=Normal">Reject→Normal</a>`);
+  }
+  if (a.status==='Waiting') b.push(`<a class="btn sm" href="/doctor/action/${a.id}/start">Consult Now</a>`);
+  if (a.status==='InProgress') b.push(`<a class="btn green sm" href="/doctor/action/${a.id}/complete">Complete</a>`);
+  if (a.status==='Waiting')
+    b.push(`<a class="btn sm" style="background:#f59e0b" href="/doctor/action/${a.id}/missed">Mark Missed</a>`);
+  if (['Waiting','InProgress','Emergency-PendingVerification'].includes(a.status))
+    b.push(`<a class="btn danger sm" href="/doctor/action/${a.id}/cancel">Cancel</a>`);
+  return b.join(' ');
+}
+function rowHtml(a, cls){
+  const sym = a.emergency_symptoms ? `<br/><small><b>Symptoms:</b> ${a.emergency_symptoms}</small>` : '';
+  const rea = a.emergency_reason ? `<br/><small><b>Reason:</b> ${a.emergency_reason}</small>` : '';
+  const wait = (a.predicted_wait_time!=null?` (${a.predicted_wait_time}m)`:'');
+  return `<tr class="${cls}">
+    <td><b>${a.queue_no}</b></td>
+    <td>${a.patient_name} <small>(${a.age||'—'})</small><br/><small>${a.phone||''}</small></td>
+    <td>${a.reason||''}${sym}${rea}</td>
+    <td>${priorityPill(a)}</td>
+    <td>${a.predicted_time||''}${wait}</td>
+    <td><span class="pill">${a.status}</span></td>
+    <td style="display:flex;gap:6px;flex-wrap:wrap">${actionCell(a)}</td>
+  </tr>`;
+}
+function renderBucket(table, items, cls, emptyMsg){
+  if (!table) return;
+  const header = table.querySelector('tr:first-child').outerHTML;
+  const body = items.length
+    ? items.map(a=>rowHtml(a, cls)).join('')
+    : `<tr><td colspan="7" style="text-align:center;color:var(--muted)">${emptyMsg}</td></tr>`;
+  table.innerHTML = header + body;
+}
+function setStat(idx, val){
+  const el = document.querySelectorAll('.card.stat .num')[idx];
+  if (el) el.textContent = val;
+}
+async function refreshQueue(){
+  try {
+    const res = await fetch('/api/doctor/live', {headers:{'X-Requested-With':'XMLHttpRequest'}});
+    if (!res.ok) return;
+    const d = await res.json();
+    setStat(0, d.stats.emergency);
+    setStat(1, d.stats.urgent);
+    setStat(2, d.stats.normal);
+    setStat(3, d.stats.done);
+    const tables = document.querySelectorAll('.card table');
+    // 3 tables in order: emergency, urgent, normal
+    const em = d.queue.filter(x => x.priority==='Emergency');
+    const emPending = em.filter(x => !x.emergency_verified && x.status==='Emergency-PendingVerification');
+    const emVerified = em.filter(x => x.emergency_verified);
+    const urgent = d.queue.filter(x => x.priority==='Urgent');
+    const normal = d.queue.filter(x => x.priority==='Normal');
+    renderBucket(tables[0],
+      [...emPending.map(a=>({...a,_c:'row-pending'})), ...emVerified.map(a=>({...a,_c:'row-emergency'}))]
+        .map(a => a),
+      'row-emergency', 'No emergency patients');
+    // custom render for emergency to keep pending/verified classes
+    if (tables[0]) {
+      const header = tables[0].querySelector('tr:first-child').outerHTML;
+      const rows = [...emPending.map(a=>rowHtml(a,'row-pending')),
+                    ...emVerified.map(a=>rowHtml(a,'row-emergency'))];
+      tables[0].innerHTML = header + (rows.length ? rows.join('') :
+        `<tr><td colspan="7" style="text-align:center;color:var(--muted)">No emergency patients</td></tr>`);
+    }
+    renderBucket(tables[1], urgent, 'row-urgent', 'No urgent patients');
+    renderBucket(tables[2], normal, 'row-normal', 'No normal patients');
+  } catch(e){}
+}
+setInterval(refreshQueue, 8000);
+</script>
+{% endblock %}

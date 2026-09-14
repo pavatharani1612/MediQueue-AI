@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Notifications</h1>
+  <div class="grid c2">
+    {% for n in rows %}
+    <div class="card {% if not n.is_read %}gradient-card{% endif %}">
+      <b>{{n.title}}</b>
+      <p style="margin:6px 0 0">{{n.message}}</p>
+      <small style="opacity:.7">{{n.created_at}}</small>
+    </div>
+    {% else %}<p style="color:var(--muted)">No notifications.</p>{% endfor %}
+  </div>
+</div>{% endblock %}

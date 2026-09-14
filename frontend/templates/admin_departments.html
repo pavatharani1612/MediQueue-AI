@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Departments · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h2 class="mq-title">Departments</h2>
+      <p class="mq-sub">Manage hospital departments used across booking, doctors and queues.</p>
+    </div>
+  </div>
+
+  <div class="mq-grid-2">
+    <section class="mq-card">
+      <h3 class="mq-card-title">All Departments</h3>
+      <div class="mq-table-wrap">
+        <table class="mq-table">
+          <thead><tr><th>Name</th><th>Description</th><th>Doctors</th><th>Appointments</th></tr></thead>
+          <tbody>
+          {% for r in rows %}
+            <tr>
+              <td><b>{{ r.name }}</b></td>
+              <td>{{ r.description or '—' }}</td>
+              <td>{{ r.doctors }}</td>
+              <td>{{ r.appts }}</td>
+            </tr>
+          {% else %}<tr><td colspan="4" class="mq-empty">No departments yet.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="mq-card">
+      <h3 class="mq-card-title">Add Department</h3>
+      <form method="post">
+        <label>Department Name</label>
+        <input class="input" name="name" required placeholder="e.g. Cardiology"/>
+        <label>Description</label>
+        <input class="input" name="description" placeholder="Short description"/>
+        <button class="btn" style="margin-top:12px">Add Department</button>
+      </form>
+    </section>
+  </div>
+</div>
+{% endblock %}

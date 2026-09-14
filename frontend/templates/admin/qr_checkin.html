@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}QR Check-In · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h2 class="mq-title">QR Check-In</h2>
+      <p class="mq-sub">Upload the patient's QR image to verify the appointment and
+        complete the <b>Check-In</b>. No camera required.</p>
+    </div>
+    <div class="mq-kpis">
+      <div class="mq-kpi"><span id="kpi-checkins">{{ counts.checked_in }}</span><small>Check-ins today</small></div>
+      <div class="mq-kpi"><span id="kpi-qr">{{ counts.qr_scans }}</span><small>QR scans</small></div>
+      <div class="mq-kpi"><span id="kpi-barcode">{{ counts.barcode_scans }}</span><small>Barcode scans</small></div>
+    </div>
+  </div>
+
+  <div class="mq-grid-2">
+    <section class="mq-card">
+      <h3 class="mq-card-title">Upload Patient QR</h3>
+      <p class="mq-hint">The QR is read automatically from the image and validated by the
+        server before any check-in is recorded.</p>
+
+      <label class="mq-upload" id="qr-drop" for="qr-file">
+        <span class="mq-upload-icon">⬆</span>
+        <span class="mq-upload-title">Choose QR Image</span>
+        <span class="mq-upload-sub">or drag &amp; drop the QR image here</span>
+        <span class="mq-upload-formats">Supported formats: PNG · JPG · JPEG · WEBP</span>
+        <input type="file" id="qr-file" accept="image/png,image/jpeg,image/jpg,image/webp" hidden />
+      </label>
+
+      <div class="mq-row">
+        <button class="btn ghost" id="btn-clear" type="button">Clear</button>
+      </div>
+
+      <div class="mq-qr-preview" id="qr-preview-wrap" hidden>
+        <img id="qr-preview" alt="Uploaded QR preview" />
+      </div>
+      <canvas id="qr-canvas" hidden></canvas>
+
+      <div id="scan-result" class="mq-result" hidden></div>
+
+      <div id="qr-details" class="mq-detail-card" hidden>
+        <h4 class="mq-card-title">Patient &amp; Appointment</h4>
+        <div id="qr-detail-body"></div>
+        <div class="mq-row">
+          <button class="btn" id="btn-confirm" type="button" hidden>Check In Patient</button>
+        </div>
+      </div>
+
+      <div class="mq-flow">
+        <span class="status-pill st-booked">Booked</span>→
+        <span class="status-pill st-checked-in">Checked-In</span>→
+        <span class="status-pill st-waiting">Waiting</span>→
+        <span class="status-pill st-consultation-started">Consultation Started</span>→
+        <span class="status-pill st-completed">Completed</span>
+      </div>
+    </section>
+
+    <section class="mq-card">
+      <h3 class="mq-card-title">Today's Scans</h3>
+      <div class="mq-table-wrap">
+        <table class="mq-table">
+          <thead><tr><th>Time</th><th>Patient</th><th>Token</th><th>Method</th><th>By</th><th>Result</th></tr></thead>
+          <tbody id="checkin-rows">
+            {% for r in recent %}
+            <tr>
+              <td>{{ r.scan_time | ampm_dt }}</td>
+              <td>{{ r.patient_name or '—' }}</td>
+              <td>{{ r.queue_no or '—' }}</td>
+              <td>{{ r.method }}</td>
+              <td>{{ r.admin_name }}</td>
+              <td><span class="mq-badge {{ 'ok' if r.status=='ok' else 'bad' }}">{{ r.status }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="mq-empty">No scans yet today.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/vendor/jsQR.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/qr_upload.js') }}"></script>
+{% endblock %}

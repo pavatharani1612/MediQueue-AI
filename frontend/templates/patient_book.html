@@ -1,0 +1,220 @@
+{% extends "base.html" %}{% block content %}
+<div class="container" style="max-width:760px">
+  <div class="card">
+    <h2 class="section-title" style="font-size:26px">Book Appointment</h2>
+    <p class="section-sub">Choose department &amp; doctor — MediQueue AI assigns the best time automatically.</p>
+    <form method="post" id="bookForm">
+      <label>Department</label>
+      <select id="dept" name="department" required
+              onchange="onDeptChange(this.value)">
+        <option value="">-- Select department --</option>
+        {% for d in depts %}<option>{{d.name}}</option>{% endfor %}
+      </select>
+
+      <label>Doctor</label>
+      <select id="doc" name="doctor_id" required><option value="">Select department first</option></select>
+
+      <label>Symptoms</label>
+      <select id="symptom" name="reason" required onchange="toggleOther(this.value)">
+        <option value="">-- Select department first --</option>
+      </select>
+      <input id="otherSymptom" name="custom_symptom" placeholder="Describe your symptom"
+             style="display:none;margin-top:8px"/>
+
+      <label>Priority</label>
+      <select id="priority" name="priority" onchange="togglePriority(this.value)">
+        <option value="Normal" selected>🟢 Normal</option>
+        <option value="Urgent">🟠 Urgent</option>
+        <option value="Emergency">🔴 Emergency</option>
+      </select>
+
+      <div id="emergencyBox" style="display:none;margin-top:14px;padding:16px;
+           background:#fef2f2;border:1px solid #fecaca;border-radius:12px">
+        <b style="color:#b91c1c">Emergency Verification Required</b>
+        <p style="margin:6px 0 10px;color:#7f1d1d;font-size:13px">
+          Emergency requests must be verified by the assigned doctor or admin
+          before receiving highest priority. Providing false emergency info
+          may delay other critical patients.
+        </p>
+
+        <label>Reason for Emergency</label>
+        <input name="emergency_reason" placeholder="Describe your emergency"/>
+
+        <label>Symptoms</label>
+        <select name="emergency_symptoms">
+          <option value="">-- Select symptom --</option>
+          <option>Chest Pain</option>
+          <option>Breathing Difficulty</option>
+          <option>Heavy Bleeding</option>
+          <option>Accident/Injury</option>
+          <option>Stroke Symptoms</option>
+          <option>Unconscious</option>
+          <option>High Fever</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <label>Preferred Date</label>
+      <input type="date" id="slot_date" name="slot_date" required onchange="loadSlots()"/>
+
+      <label>Available Time Slots <small id="slotClock" style="color:var(--muted);font-weight:500"></small></label>
+      <div id="slotsBox" class="slots-grid">
+        <p style="color:var(--muted);grid-column:1/-1">Select department, doctor, and date to see slots.</p>
+      </div>
+      <input type="hidden" id="slot_time" name="slot_time" required/>
+
+      <button class="btn ripple" style="width:100%;margin-top:14px">Confirm Booking</button>
+    </form>
+  </div>
+</div>
+<style>
+.slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:8px}
+.slot{padding:10px 6px;border-radius:10px;border:1px solid #cbd5e1;background:#fff;text-align:center;
+      cursor:pointer;font-weight:600;color:#334155;transition:.2s var(--ease,ease);font-size:13px;line-height:1.35}
+.slot:hover{transform:translateY(-2px);border-color:#2563eb;box-shadow:0 6px 14px rgba(37,99,235,.15)}
+.slot small{display:block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.slot.taken,.slot.past{background:#f1f5f9;color:#94a3b8;cursor:not-allowed;transform:none;box-shadow:none;border-color:#e2e8f0}
+.slot.taken:hover,.slot.past:hover{transform:none;border-color:#e2e8f0;box-shadow:none}
+.slot.past small,.slot.taken small{color:#ef4444}
+.slot.sel{background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;border-color:transparent}
+.slot.sel small{color:#e0f2fe}
+@media(max-width:520px){.slots-grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}}
+</style>
+<script>
+/* ------- Department → symptom mapping (auto filter) ------- */
+const SYMPTOMS = {
+  "ENT": ["Ear Pain","Hearing Loss","Throat Pain","Nose Block","Sinus","Ear Infection"],
+  "Cardiology": ["Chest Pain","Heart Beat","Blood Pressure","Breathing Difficulty"],
+  "Orthopedics": ["Leg Pain","Back Pain","Neck Pain","Joint Pain","Bone Fracture"],
+  "Orthopedic": ["Leg Pain","Back Pain","Neck Pain","Joint Pain","Bone Fracture"],
+  "Neurology": ["Headache","Migraine","Memory Loss","Dizziness"],
+  "Dermatology": ["Skin Allergy","Rashes","Acne","Itching"],
+  "Dental": ["Tooth Pain","Gum Bleeding","Tooth Decay"],
+  "Dentistry": ["Tooth Pain","Gum Bleeding","Tooth Decay"],
+  "Ophthalmology": ["Eye Pain","Blur Vision","Red Eye"],
+  "General Medicine": ["Fever","Cold","Cough","Body Pain","Vomiting"],
+  "Pediatrics": ["Fever","Cold","Cough","Stomach Pain","Vaccination"],
+  "Gynecology": ["Abdominal Pain","Irregular Periods","Pregnancy Care","Infection"]
+};
+
+function fillSymptoms(dept){
+  const sel = document.getElementById('symptom');
+  const list = SYMPTOMS[dept] || ["Fever","Cold","Cough","Body Pain","Checkup"];
+  sel.innerHTML = '<option value="">-- Select symptom --</option>' +
+    list.map(s => '<option>' + s + '</option>').join('') +
+    '<option value="Others">Others</option>';
+  toggleOther('');
+}
+function toggleOther(v){
+  const inp = document.getElementById('otherSymptom');
+  const show = (v === 'Others');
+  inp.style.display = show ? 'block' : 'none';
+  inp.required = show;
+  if(!show) inp.value = '';
+}
+function onDeptChange(dept){
+  fillSymptoms(dept);
+  loadDoctorsByDept(dept, document.getElementById('doc'));
+  setTimeout(loadSlots, 250);
+}
+function togglePriority(v){
+  document.getElementById("emergencyBox").style.display = (v === "Emergency") ? "block" : "none";
+  document.querySelectorAll("#emergencyBox input,#emergencyBox select")
+    .forEach(i => i.required = (v === "Emergency"));
+}
+
+/* ------- Live slot board (always relative to current system time) ------- */
+async function loadSlots(){
+  const doc = document.getElementById('doc').value;
+  const dt  = document.getElementById('slot_date').value;
+  const box = document.getElementById('slotsBox');
+  document.getElementById('slot_time').value = '';
+  if(!doc || isNaN(parseInt(doc)) || !dt){
+    box.innerHTML = '<p style="color:var(--muted);grid-column:1/-1">Select doctor and date.</p>'; return;
+  }
+  box.innerHTML = '<p style="color:var(--muted);grid-column:1/-1">Loading slots…</p>';
+  let d;
+  try{
+    const r = await fetch(`/api/slots?doctor_id=${doc}&date=${dt}&_=${Date.now()}`);
+    d = await r.json();
+  }catch(e){
+    box.innerHTML = '<p style="color:#b91c1c;grid-column:1/-1">Unable to load slots.</p>'; return;
+  }
+  if(!d.slots || !d.slots.length){
+    box.innerHTML = '<p style="color:#b91c1c;grid-column:1/-1">No Slots Available</p>'; return;
+  }
+  if(!d.slots.some(s => s.available)){
+    box.innerHTML = '<p style="color:#b91c1c;grid-column:1/-1">No Slots Available for this day — please pick another date.</p>';
+    return;
+  }
+  box.innerHTML = '';
+  d.slots.forEach(s => {
+    const el = document.createElement('div');
+    const unavailable = s.past || s.taken;
+    el.className = 'slot' + (s.past ? ' past' : (s.taken ? ' taken' : ''));
+    el.innerHTML = (s.label || s.time) +
+      (s.past ? '<small>❌ Unavailable</small>' :
+       (s.taken ? '<small>❌ Booked</small>' : '<small>Available</small>'));
+    if(!unavailable){
+      el.onclick = () => {
+        document.querySelectorAll('.slot').forEach(x => x.classList.remove('sel'));
+        el.classList.add('sel');
+        document.getElementById('slot_time').value = s.time;
+      };
+    }
+    box.appendChild(el);
+  });
+}
+
+document.getElementById('doc').addEventListener('change', loadSlots);
+document.getElementById('bookForm').addEventListener('submit', function(e){
+  if(!document.getElementById('slot_time').value){
+    e.preventDefault();
+    alert('Please choose an available time slot.');
+    return;
+  }
+  const sym = document.getElementById('symptom');
+  const other = document.getElementById('otherSymptom');
+  if(sym.value === 'Others' && other.value.trim()){
+    sym.insertAdjacentHTML('afterend',
+      '<input type="hidden" name="reason" value="' + other.value.trim().replace(/"/g,'') + '">');
+    sym.removeAttribute('name');
+  }
+});
+
+function tickClock(){
+  const n = new Date();
+  document.getElementById('slotClock').textContent =
+    '· now ' + n.toLocaleTimeString([], {hour:'numeric', minute:'2-digit', hour12:true});
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const d = document.getElementById('slot_date');
+  if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
+  if(d) d.min = new Date().toISOString().slice(0,10);
+  tickClock(); setInterval(tickClock, 30000);
+  setInterval(() => { if(document.getElementById('doc').value) loadSlots(); }, 120000);
+});
+
+/* ------- Reappointment prefill (optional; uses existing booking flow) ------- */
+const PREFILL = {% if prefill is defined and prefill %}{{ prefill | tojson }}{% else %}null{% endif %};
+document.addEventListener('DOMContentLoaded', async () => {
+  if(!PREFILL || !PREFILL.department) return;
+  const deptSel = document.getElementById('dept');
+  if(![...deptSel.options].some(o => (o.value || o.text) === PREFILL.department)) return;
+  deptSel.value = PREFILL.department;
+  fillSymptoms(PREFILL.department);
+  await loadDoctorsByDept(PREFILL.department, document.getElementById('doc'));
+  if(PREFILL.doctor_id){
+    const docSel = document.getElementById('doc');
+    if([...docSel.options].some(o => o.value === String(PREFILL.doctor_id))){
+      docSel.value = String(PREFILL.doctor_id);
+      loadSlots();
+    }
+  }
+  if(PREFILL.reason){
+    const sym = document.getElementById('symptom');
+    if([...sym.options].some(o => (o.value || o.text) === PREFILL.reason)) sym.value = PREFILL.reason;
+  }
+});
+</script>
+{% endblock %}

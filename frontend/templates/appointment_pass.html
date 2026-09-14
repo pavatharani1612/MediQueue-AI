@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}QR Appointment Pass — MediQueue AI{% endblock %}
+{% block content %}
+<div class="mq-orb one"></div>
+<div class="mq-wrap pass-wrap">
+  <h1 class="mq-title">Your <span class="accent">Appointment Pass</span></h1>
+  <p class="mq-sub">Show this QR code at the hospital check-in desk. If scanning is
+     unavailable, staff can type your appointment code manually.</p>
+
+  <div class="mq-pass pass-card">
+    <div class="mq-pass-head pass-head">
+      <div class="pass-brand"><span class="pass-logo">✚</span> MediQueue AI</div>
+      <div class="pass-token">Token {{ a.queue_no }}</div>
+      <div class="pass-sub">{{ a.ddept }} · Dr {{ a.dname }}</div>
+    </div>
+
+    <div class="pass-perf"><span></span><span></span></div>
+
+    <div class="mq-pass-body pass-body">
+      <div class="pass-qr-box">
+        <div class="mq-pass-qr pass-qr">
+          {% if qr_svg %}{{ qr_svg | safe }}
+          {% else %}<div style="padding:30px;text-align:center;color:#64748b">
+            QR rendering unavailable — please use the appointment code below.</div>{% endif %}
+        </div>
+        <div class="pass-qr-hint">Scan at check-in</div>
+        <div class="mq-pass-code pass-code">{{ qr_code }}</div>
+      </div>
+
+      <div class="pass-details">
+        <div class="mq-kv"><span>Patient</span><b>{{ a.pname }}</b></div>
+        <div class="mq-kv"><span>Date</span><b>{{ a.appt_date }}</b></div>
+        <div class="mq-kv"><span>Time</span><b>{{ ampm(a.appt_time or a.slot_time or a.predicted_time) }}</b></div>
+        <div class="mq-kv"><span>Priority</span>
+          <b><span class="mq-pill {% if a.priority=='Emergency' %}emergency{% elif a.priority=='Urgent' %}warn{% endif %}">{{ a.priority }}</span></b></div>
+        <div class="mq-kv"><span>Check-in status</span>
+          <b><span class="mq-pill {% if a.checkin_status=='Checked-In' %}ok{% else %}muted{% endif %}">{{ a.checkin_status or 'Booked' }}</span></b></div>
+        {% if a.checkin_time %}<div class="mq-kv"><span>Checked in at</span><b>{{ ampm(a.checkin_time) }}</b></div>{% endif %}
+        <div class="mq-kv"><span>Consultation fee</span><b>₹{{ a.fee }}</b></div>
+      </div>
+    </div>
+
+    <div class="pass-foot">
+      <a class="mq-btn" href="/patient/live">Track live queue</a>
+      <button class="mq-btn ghost" onclick="window.print()">🖨 Print pass</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.pass-wrap{max-width:900px}
+.pass-card{overflow:hidden;border-radius:22px;box-shadow:0 22px 50px rgba(15,23,42,.14)}
+.pass-head{padding:26px 28px 22px;text-align:left}
+.pass-brand{display:flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.14em;
+  text-transform:uppercase;opacity:.9;font-weight:700}
+.pass-logo{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+  border-radius:7px;background:rgba(255,255,255,.22);font-size:13px}
+.pass-token{font-size:30px;font-weight:800;margin-top:10px;letter-spacing:-.02em}
+.pass-sub{opacity:.92;font-size:14px;margin-top:2px}
+.pass-perf{position:relative;height:0}
+.pass-perf span{position:absolute;top:-13px;width:26px;height:26px;border-radius:50%;
+  background:var(--bg,#f6f8fc)}
+.pass-perf span:first-child{left:-13px}
+.pass-perf span:last-child{right:-13px}
+.pass-body{display:grid;grid-template-columns:minmax(210px,260px) 1fr;gap:26px;
+  padding:26px 28px 8px;align-items:start}
+.pass-qr-box{text-align:center}
+.pass-qr{display:inline-block;padding:14px;border-radius:18px;background:#fff;
+  border:1px solid #e6ecf5;box-shadow:0 8px 20px rgba(15,23,42,.07)}
+.pass-qr svg,.pass-qr img{width:100%;height:auto;max-width:190px;display:block}
+.pass-qr-hint{margin-top:10px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted)}
+.pass-code{margin-top:8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:13px;letter-spacing:.06em;word-break:break-all}
+.pass-details .mq-kv{padding:11px 2px;border-bottom:1px dashed rgba(148,163,184,.35)}
+.pass-details .mq-kv:last-child{border-bottom:none}
+.pass-foot{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;
+  padding:18px 28px 24px;border-top:1px solid rgba(148,163,184,.20)}
+@media (max-width:760px){
+  .pass-body{grid-template-columns:1fr;padding:20px 18px 6px}
+  .pass-head{padding:22px 18px}
+  .pass-foot{padding:16px 18px 20px;justify-content:stretch}
+  .pass-foot .mq-btn{flex:1;text-align:center}
+}
+@media print{
+  .nav,.emerg,footer,.pass-foot,.orb,.mq-orb,#loader{display:none !important}
+  .pass-card{box-shadow:none}
+}
+</style>
+{% endblock %}

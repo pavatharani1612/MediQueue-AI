@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <div class="card gradient-card" style="text-align:center">
+    <h1 style="font-size:44px;margin:0">🚨 24×7 Emergency</h1>
+    <p style="font-size:20px">Call our ambulance instantly</p>
+    <a class="btn ghost" style="font-size:22px;padding:16px 30px" href="tel:{{CFG.EMERGENCY_NUMBER}}">{{CFG.EMERGENCY_NUMBER}}</a>
+  </div>
+  <div class="grid c3" style="margin-top:22px">
+    {% for icon,t,d in [("🚑","Ambulance","Free pickup within 8 km"),
+                         ("💉","Trauma Care","Fully equipped critical unit"),
+                         ("🩸","Blood Bank","All blood groups available")] %}
+    <div class="card"><div style="font-size:40px">{{icon}}</div><h3>{{t}}</h3><p style="color:var(--muted)">{{d}}</p></div>
+    {% endfor %}
+  </div>
+</div>{% endblock %}

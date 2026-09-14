@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Enterprise Settings · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head"><div>
+    <h2 class="mq-title">Enterprise Settings</h2>
+    <p class="mq-sub">Changes reflect instantly on every dashboard and are versioned in Settings History.</p>
+  </div><a class="btn ghost sm" href="/admin/settings-history">View History</a></div>
+
+  <form method="post" class="mq-grid-2">
+    <section class="mq-card"><h3 class="mq-card-title">Hospital</h3>
+      <label class="mq-field">Hospital Name<input class="input" name="hospital_name" value="{{ vals.hospital_name }}"></label>
+      <label class="mq-field">Logo URL<input class="input" name="hospital_logo" value="{{ vals.hospital_logo }}"></label>
+      <label class="mq-field">Theme
+        <select class="input" name="theme">
+          <option value="light" {% if vals.theme=='light' %}selected{% endif %}>Light</option>
+          <option value="dark" {% if vals.theme=='dark' %}selected{% endif %}>Dark</option>
+        </select></label>
+      <label class="mq-field">Notifications
+        <select class="input" name="notifications_enabled">
+          <option value="1" {% if vals.notifications_enabled=='1' %}selected{% endif %}>Enabled</option>
+          <option value="0" {% if vals.notifications_enabled=='0' %}selected{% endif %}>Disabled</option>
+        </select></label>
+    </section>
+    <section class="mq-card"><h3 class="mq-card-title">Timings &amp; Rules</h3>
+      <label class="mq-field">Opening Time (24h stored, shown as AM/PM)<input class="input" name="working_start" value="{{ vals.working_start }}" placeholder="09:00"></label>
+      <label class="mq-field">Closing Time<input class="input" name="working_end" value="{{ vals.working_end }}" placeholder="21:00"></label>
+      <label class="mq-field">Slot Interval (minutes)<input class="input" name="slot_interval_min" value="{{ vals.slot_interval_min }}"></label>
+      <label class="mq-field">Minimum Booking Lead (minutes)<input class="input" name="min_lead_minutes" value="{{ vals.min_lead_minutes }}"></label>
+      <label class="mq-field">Queue Rules<input class="input" name="queue_rules" value="{{ vals.queue_rules }}"></label>
+      <label class="mq-field">Appointment Rules<input class="input" name="appointment_rules" value="{{ vals.appointment_rules }}"></label>
+      <button class="btn" type="submit">Save Settings</button>
+    </section>
+  </form>
+
+  <section class="mq-card"><h3 class="mq-card-title">Latest Changes</h3>
+    <div class="mq-table-wrap"><table class="mq-table">
+      <thead><tr><th>Setting</th><th>Old</th><th>New</th><th>Admin</th><th>Date</th><th>Time</th></tr></thead>
+      <tbody>{% for r in recent %}<tr><td><code>{{ r.setting_key }}</code></td><td class="mq-old">{{ r.old_value }}</td>
+        <td class="mq-new">{{ r.new_value }}</td><td>{{ r.admin_name }}</td><td>{{ r.date }}</td><td>{{ r.time }}</td></tr>
+      {% else %}<tr><td colspan="6" class="mq-empty">No changes yet.</td></tr>{% endfor %}</tbody>
+    </table></div></section>
+</div>
+{% endblock %}

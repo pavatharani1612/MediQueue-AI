@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Live Queue Tracker — MediQueue AI{% endblock %}
+{% block content %}
+<div class="mq-orb one"></div><div class="mq-orb two"></div>
+<div class="mq-wrap" data-mq-live-root data-mq-url="/api/patient/queue-live" data-mq-interval="7000">
+  <h1 class="mq-title">Live <span class="accent">Queue Tracker</span></h1>
+  <p class="mq-sub">Updated automatically every few seconds ·
+     Last refresh: <b data-mq-updated>—</b></p>
+
+  <div id="mq-live-host">
+    {% for a in appts %}
+    <div class="mq-live mq-mt" data-mq-appt="{{ a.id }}">
+      <div class="mq-live-head">
+        <span class="mq-dot"></span>
+        <h3 class="mq-live-title">Dr {{ a.dname }} · {{ a.ddept }}</h3>
+        <span class="mq-spacer"></span>
+        <span class="mq-pill" data-mq-badge>{{ a.status }}</span>
+      </div>
+
+      <div class="mq-steps">
+        <div class="mq-step" data-mq-step>Booked</div>
+        <div class="mq-step" data-mq-step>Checked-In</div>
+        <div class="mq-step" data-mq-step>Waiting</div>
+        <div class="mq-step" data-mq-step>Consulting</div>
+        <div class="mq-step" data-mq-step>Completed</div>
+      </div>
+
+      <div class="mq-live-grid">
+        <div class="mq-live-tile"><div class="k">Current Token</div><div class="v" data-mq="current_token">—</div></div>
+        <div class="mq-live-tile"><div class="k">Your Token</div><div class="v" data-mq="your_token">{{ a.queue_no }}</div></div>
+        <div class="mq-live-tile"><div class="k">Patients Ahead</div><div class="v" data-mq="patients_ahead" data-mq-animate>0</div></div>
+        <div class="mq-live-tile"><div class="k">Estimated Wait</div><div class="v small" data-mq="estimated_wait_text">—</div></div>
+        <div class="mq-live-tile"><div class="k">Predicted Consultation</div><div class="v small" data-mq="predicted_consultation">—</div></div>
+        <div class="mq-live-tile"><div class="k">Doctor Status</div><div class="v small" data-mq="doctor_status">—</div></div>
+        <div class="mq-live-tile"><div class="k">Queue Status</div><div class="v small" data-mq="queue_status">—</div></div>
+        <div class="mq-live-tile"><div class="k">Appointment</div><div class="v small" data-mq="appointment_status">—</div></div>
+      </div>
+
+      <div class="mq-row" style="margin-top:16px;position:relative;z-index:1">
+        <a class="mq-btn sm" href="/patient/qr/{{ a.id }}">🎟️ QR Pass</a>
+        <a class="mq-btn ghost sm" href="/patient/timeline/{{ a.id }}">Timeline</a>
+        <a class="mq-btn ghost sm" href="/patient/response/{{ a.id }}/cancel">Cancel</a>
+      </div>
+    </div>
+    {% else %}
+    <div class="mq-card mq-empty">No active appointment right now.
+      <a class="mq-btn sm" href="/patient/book" style="margin-left:10px">Book an appointment</a></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

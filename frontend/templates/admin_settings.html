@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Settings — Admin{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px">
+  <h1 class="section-title">⚙️ System Settings</h1>
+  <div class="card glass">
+    <form method="post" style="display:flex;flex-direction:column;gap:12px">
+      <label>Consultation Slot Interval (minutes)
+        <select name="slot_interval_min">
+          {% for v in [10,15,20,30] %}
+            <option value="{{ v }}" {% if vals.slot_interval_min|string==v|string %}selected{% endif %}>{{ v }} minutes</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Re-Appointment Grace Period (minutes before auto-cancel)
+        <input type="number" name="reappt_grace_min" min="5" max="120"
+               value="{{ vals.reappt_grace_min }}"/>
+      </label>
+      <label>No-Response Auto-Cancel Window (minutes)
+        <input type="number" name="no_response_min" min="5" max="240"
+               value="{{ vals.no_response_min }}"/>
+      </label>
+      <label>Working Start
+        <input type="time" name="working_start" value="{{ vals.working_start }}"/>
+      </label>
+      <label>Working End
+        <input type="time" name="working_end" value="{{ vals.working_end }}"/>
+      </label>
+      <button class="btn ripple">Save Settings</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

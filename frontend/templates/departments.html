@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Departments</h1>
+  <p class="section-sub">10 specialities · 40 doctors · one intelligent queue.</p>
+  <div class="grid c3">
+    {% for d in depts %}
+    <a class="card" href="/doctors?dept={{d.name}}" style="text-decoration:none;color:inherit">
+      <div style="font-size:44px">{{d.icon}}</div>
+      <h3 style="margin:8px 0;color:var(--deep)">{{d.name}}</h3>
+      <p style="color:var(--muted);margin:0 0 10px">{{d.description}}</p>
+      <span class="pill inprogress">View Doctors →</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>{% endblock %}

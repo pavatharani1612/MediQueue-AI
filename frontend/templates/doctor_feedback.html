@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}My Reviews — Doctor{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 class="section-title">💬 My Patient Reviews</h1>
+  <div class="grid c4">
+    <div class="card stat glass"><div class="num" data-count="{{ total }}">0</div>
+      <div class="lbl">Total Reviews</div></div>
+    <div class="card stat glass"><div class="num">{{ avg }}★</div>
+      <div class="lbl">Overall Average</div></div>
+    <div class="card stat glass"><div class="num">{{ avg_d }}★</div>
+      <div class="lbl">Behaviour Score</div></div>
+  </div>
+
+  <div class="grid c2" style="margin-top:22px">
+    {% for r in rows %}
+    <div class="card glass">
+      <div style="display:flex;justify-content:space-between">
+        <b>{{ r.pname }}</b>
+        <div style="color:#f59e0b;letter-spacing:2px">{{ '★'*r.rating }}</div>
+      </div>
+      <small style="color:var(--muted)">Queue {{ r.queue_no }} · {{ r.created_at[:16] }}</small>
+      {% if r.review %}<p style="margin:8px 0 0">{{ r.review }}</p>{% endif %}
+    </div>
+    {% else %}<p style="color:var(--muted)">No reviews yet.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Pending Patient Requests — Admin{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 class="section-title">📥 Pending Patient Requests</h1>
+
+  <h2 style="margin-top:22px">⏱️ Waiting Requests</h2>
+  <div class="card glass" style="overflow-x:auto">
+    <table class="table">
+      <thead><tr><th>#</th><th>Patient</th><th>Queue</th><th>Doctor</th>
+        <th>Requested</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for r in wait5 %}
+        <tr>
+          <td>{{ r.id }}</td><td>{{ r.pname }}</td><td>{{ r.queue_no }}</td>
+          <td>{{ r.dname }}</td><td>+{{ r.requested_minutes }} min</td>
+          <td>
+            <a class="btn sm ripple" href="/admin/wait5/{{ r.id }}/approve">Approve</a>
+            <a class="btn danger sm ripple" href="/admin/wait5/{{ r.id }}/reject">Reject</a>
+          </td>
+        </tr>
+      {% else %}<tr><td colspan="6" style="color:var(--muted)">No waiting requests.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin-top:26px">🔁 Re-Appointment Requests</h2>
+  <div class="grid c2">
+  {% for r in reappt %}
+    <div class="card glass">
+      <h3 style="margin:0">{{ r.pname }} — Q{{ r.queue_no }}</h3>
+      <p style="color:var(--muted)">Current: {{ r.dname }} · {{ r.ddept }} · {{ r.reason }}</p>
+      <form method="POST" action="/admin/reappointment/{{ r.id }}/approve"
+            style="display:flex;flex-direction:column;gap:8px">
+        <label>New Date <input type="date" name="new_date" required></label>
+        <label>New Time <input type="time" name="new_time" required></label>
+        <label>Doctor
+          <select name="new_doctor_id" required>
+            {% for d in doctors %}
+              <option value="{{ d.id }}" {% if d.id==r.doctor_id %}selected{% endif %}>
+                {{ d.name }} ({{ d.department }})
+              </option>
+            {% endfor %}
+          </select>
+        </label>
+        <div style="display:flex;gap:8px">
+          <button class="btn sm ripple">Approve & Confirm</button>
+          <a class="btn danger sm ripple"
+             href="/admin/reappointment/{{ r.id }}/reject">Reject</a>
+        </div>
+      </form>
+    </div>
+  {% else %}<p style="color:var(--muted)">No re-appointment requests.</p>{% endfor %}
+  </div>
+
+  <h2 style="margin-top:26px">❌ Cancellation Requests</h2>
+  <div class="grid c2">
+  {% for r in cancels %}
+    <div class="card glass">
+      <b>{{ r.pname }}</b> — Q{{ r.queue_no }}<br/>
+      <small style="color:var(--muted)">{{ r.dname }} · {{ r.ddept }}</small>
+      <p style="margin:8px 0 0">Reason: <i>{{ r.reason or '—' }}</i></p>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <a class="btn sm ripple" href="/admin/cancel-request/{{ r.id }}/approve">Approve Cancel</a>
+        <a class="btn danger sm ripple" href="/admin/cancel-request/{{ r.id }}/reject">Reject</a>
+      </div>
+    </div>
+  {% else %}<p style="color:var(--muted)">No cancellation requests.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

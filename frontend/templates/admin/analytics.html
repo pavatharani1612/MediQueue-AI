@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Analytics · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div><h2 class="mq-title">Enterprise Analytics</h2>
+      <p class="mq-sub">Live hospital performance · server time <b id="srv-time">{{ stats.server_time }}</b></p></div>
+  </div>
+  <div class="mq-cards" id="stat-cards">
+    <div class="mq-stat"><small>Today's Queue</small><b data-stat="todays_queue">{{ stats.todays_queue }}</b></div>
+    <div class="mq-stat"><small>Today's Appointments</small><b data-stat="todays_appointments">{{ stats.todays_appointments }}</b></div>
+    <div class="mq-stat"><small>Doctors Online</small><b data-stat="doctors_online">{{ stats.doctors_online }}</b></div>
+    <div class="mq-stat"><small>Departments</small><b data-stat="departments">{{ stats.departments }}</b></div>
+    <div class="mq-stat"><small>Revenue (₹)</small><b data-stat="revenue">{{ stats.revenue }}</b></div>
+    <div class="mq-stat"><small>Live Check-Ins</small><b data-stat="live_checkins">{{ stats.live_checkins }}</b></div>
+    <div class="mq-stat"><small>QR Scans</small><b data-stat="qr_scans">{{ stats.qr_scans }}</b></div>
+    <div class="mq-stat"><small>Barcode Scans</small><b data-stat="barcode_scans">{{ stats.barcode_scans }}</b></div>
+    <div class="mq-stat"><small>Prediction Accuracy</small><b data-stat="prediction_accuracy">{{ stats.prediction_accuracy or '—' }}%</b></div>
+    <div class="mq-stat"><small>Completed</small><b data-stat="completed">{{ stats.completed }}</b></div>
+    <div class="mq-stat"><small>Cancelled</small><b data-stat="cancelled">{{ stats.cancelled }}</b></div>
+    <div class="mq-stat"><small>System Health</small><b data-stat="system_health">{{ stats.system_health }}</b></div>
+  </div>
+
+  <div class="mq-grid-2">
+    <section class="mq-card"><h3 class="mq-card-title">Monthly Appointments</h3>
+      <canvas id="chart-monthly" height="180"></canvas></section>
+    <section class="mq-card"><h3 class="mq-card-title">Recent Activities</h3>
+      <div class="mq-table-wrap"><table class="mq-table">
+        <thead><tr><th>Admin</th><th>Action</th><th>Time</th></tr></thead>
+        <tbody>{% for a in activities %}<tr><td>{{ a.actor_name }}</td><td>{{ a.action }}</td><td>{{ a.time }}</td></tr>
+        {% else %}<tr><td colspan="3" class="mq-empty">No activity yet.</td></tr>{% endfor %}</tbody>
+      </table></div></section>
+  </div>
+
+  <section class="mq-card"><h3 class="mq-card-title">Daily Report — {{ daily.date }}</h3>
+    <p class="mq-sub">Total {{ daily.total }} · Completed {{ daily.completed }} · Cancelled {{ daily.cancelled }} · Checked-In {{ daily.checked_in }} · Revenue ₹{{ daily.revenue }}</p>
+    <a class="btn ghost sm" href="/admin/reports.csv">Download CSV Report</a></section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const MONTHLY = {{ monthly.days | tojson }};
+if (window.Chart && document.getElementById('chart-monthly')) {
+  new Chart(document.getElementById('chart-monthly'), {
+    type: 'line',
+    data: { labels: MONTHLY.map(d => d.d),
+      datasets: [{ label: 'Appointments', data: MONTHLY.map(d => d.n), tension: .35, borderColor: '#0ea5e9', fill: false },
+                 { label: 'Completed', data: MONTHLY.map(d => d.completed), tension: .35, borderColor: '#22c55e', fill: false }] },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+</script>
+{% endblock %}

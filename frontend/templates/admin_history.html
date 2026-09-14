@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}History · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h2 class="mq-title">History</h2>
+      <p class="mq-sub">Every visit, appointment and scan in one place.</p>
+    </div>
+  </div>
+
+  <div class="mq-modes" role="tablist" style="max-width:520px">
+    <button type="button" class="mq-mode active" data-tab="visits">Visits</button>
+    <button type="button" class="mq-mode" data-tab="appts">Appointments</button>
+    <button type="button" class="mq-mode" data-tab="scans">Scans</button>
+  </div>
+
+  <section class="mq-card hist-tab" id="tab-visits">
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>Date</th><th>Patient</th><th>Doctor</th><th>Department</th><th>Token</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for v in visits %}
+          <tr>
+            <td>{{ v.visit_date or v.appt_date }}</td>
+            <td>{{ v.pname or '—' }}</td>
+            <td>{{ v.dname or '—' }}</td>
+            <td>{{ v.ddept or '—' }}</td>
+            <td>{{ v.queue_no or '—' }}</td>
+            <td><span class="status-pill st-{{ (v.status or 'completed')|lower|replace(' ','-') }}">{{ v.status or 'Completed' }}</span></td>
+          </tr>
+        {% else %}<tr><td colspan="6" class="mq-empty">No visit history yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mq-card hist-tab" id="tab-appts" hidden>
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>Date</th><th>Time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Priority</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for a in appts %}
+          <tr>
+            <td>{{ a.appt_date }}</td>
+            <td>{{ (a.appt_time or a.slot_time or a.predicted_time) | ampm }}</td>
+            <td>{{ a.pname or '—' }}</td>
+            <td>{{ a.dname or '—' }}</td>
+            <td>{{ a.reason or '—' }}</td>
+            <td>{{ a.priority or 'Normal' }}</td>
+            <td><span class="status-pill st-{{ (a.checkin_status or a.status or 'booked')|lower|replace(' ','-') }}">{{ a.checkin_status or a.status }}</span></td>
+          </tr>
+        {% else %}<tr><td colspan="7" class="mq-empty">No appointments recorded.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mq-card hist-tab" id="tab-scans" hidden>
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>Time</th><th>Patient</th><th>Token</th><th>Stage</th><th>Method</th><th>By</th><th>Result</th></tr></thead>
+        <tbody>
+        {% for s in scans %}
+          <tr>
+            <td>{{ s.scan_time | ampm_dt }}</td>
+            <td>{{ s.patient_name or '—' }}</td>
+            <td>{{ s.queue_no or '—' }}</td>
+            <td>{{ s.stage or 'checkin' }}</td>
+            <td>{{ s.method }}</td>
+            <td>{{ s.admin_name }}</td>
+            <td><span class="mq-badge {{ 'ok' if s.status=='ok' else 'bad' }}">{{ s.status }}</span></td>
+          </tr>
+        {% else %}<tr><td colspan="7" class="mq-empty">No scans recorded.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+document.querySelectorAll('.mq-mode[data-tab]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.mq-mode[data-tab]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.hist-tab').forEach(t=>t.hidden = true);
+    document.getElementById('tab-' + b.dataset.tab).hidden = false;
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}My Appointment History — MediQueue AI{% endblock %}
+{% block content %}
+<div class="mq-wrap">
+  <h1 class="mq-title">My <span class="accent">Appointment History</span></h1>
+  <p class="mq-sub">Every appointment you have booked, with AI predicted and actual waiting times.</p>
+
+  <div class="mq-chiprow">
+    <a class="mq-chip {{ 'active' if not f.status }}" href="/patient/history">All ({{ counts.all }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Upcoming' }}" href="/patient/history?status=Upcoming">Upcoming ({{ counts.upcoming }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Completed' }}" href="/patient/history?status=Completed">Completed ({{ counts.completed }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Cancelled' }}" href="/patient/history?status=Cancelled">Cancelled ({{ counts.cancelled }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Missed' }}" href="/patient/history?status=Missed">Missed ({{ counts.missed }})</a>
+  </div>
+
+  <form class="mq-filters" method="get">
+    <div class="mq-field"><label>Status</label>
+      <select class="mq-select" name="status">
+        <option value="">Any</option>
+        {% for s in ['Upcoming','Waiting','InProgress','Completed','Cancelled','Missed'] %}
+        <option value="{{ s }}" {{ 'selected' if f.status==s }}>{{ s }}</option>{% endfor %}
+      </select></div>
+    <div class="mq-field"><label>Department</label>
+      <select class="mq-select" name="dept">
+        <option value="">Any</option>
+        {% for d in my_depts %}<option value="{{ d.department }}" {{ 'selected' if f.dept==d.department }}>{{ d.department }}</option>{% endfor %}
+      </select></div>
+    <div class="mq-field"><label>Doctor</label>
+      <select class="mq-select" name="doctor">
+        <option value="">Any</option>
+        {% for d in my_docs %}<option value="{{ d.id }}" {{ 'selected' if f.doctor==d.id|string }}>{{ d.name }}</option>{% endfor %}
+      </select></div>
+    <div class="mq-field"><label>From</label>
+      <input class="mq-input" type="date" name="from" value="{{ f['from'] }}"></div>
+    <div class="mq-field"><label>To</label>
+      <input class="mq-input" type="date" name="to" value="{{ f.to }}"></div>
+    <div class="mq-field">
+      <button class="mq-btn" type="submit">Apply filters</button></div>
+  </form>
+
+  <div class="mq-table-wrap mq-mt">
+    <table class="mq-table">
+      <thead><tr>
+        <th>Date</th><th>Time</th><th>Dept</th><th>Doctor</th><th>Token</th>
+        <th>Priority</th><th>Reason</th><th>Predicted wait</th><th>Actual wait</th>
+        <th>Check-in</th><th>Completed</th><th>Status</th><th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.appt_date }}</td>
+          <td>{{ (r.appt_time or r.slot_time or r.predicted_time) | ampm }}</td>
+          <td>{{ r.department }}</td>
+          <td>Dr {{ r.dname }}</td>
+          <td><b>{{ r.queue_no }}</b></td>
+          <td><span class="mq-pill {% if r.priority=='Emergency' %}emergency{% elif r.priority=='Urgent' %}warn{% else %}muted{% endif %}">{{ r.priority }}</span></td>
+          <td>{{ r.reason or '—' }}</td>
+          <td>{{ r.predicted_wait_time if r.predicted_wait_time is not none else '—' }} {% if r.predicted_wait_time is not none %}min{% endif %}</td>
+          <td>{{ r.actual_wait_minutes ~ ' min' if r.actual_wait_minutes is not none else '—' }}</td>
+          <td>{{ r.checkin_time | ampm_dt if r.checkin_time else '—' }}</td>
+          <td>{{ r.actual_end | ampm_dt if r.actual_end else '—' }}</td>
+          <td>
+            <span class="mq-pill {% if r.status=='Completed' %}ok{% elif r.status in ('Cancelled','Missed') %}danger{% elif r.status=='InProgress' %}info{% else %}warn{% endif %}">
+              {{ 'Consulting' if r.status=='InProgress' else r.status }}</span>
+            {% if r.is_reappointment %}<span class="mq-pill info">Reappointed</span>{% endif %}
+          </td>
+          <td>
+            <div class="mq-actions">
+              <a class="mq-act" href="/patient/timeline/{{ r.id }}" title="View appointment timeline">
+                <span class="ic">🕒</span><span>Timeline</span></a>
+              {% if r.status in ('Waiting','InProgress','Emergency-PendingVerification') %}
+                <a class="mq-act primary" href="/patient/appointment/{{ r.id }}/pass" title="Open appointment pass">
+                  <span class="ic">🎫</span><span>Pass</span></a>
+              {% elif r.status=='Completed' and not r.feedback_submitted %}
+                <a class="mq-act primary" href="/patient/feedback/{{ r.id }}" title="Rate this consultation">
+                  <span class="ic">★</span><span>Rate</span></a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="13" class="mq-empty">No appointments match these filters.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.mq-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+.mq-act{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;
+  font-size:12.5px;font-weight:600;line-height:1;text-decoration:none;white-space:nowrap;
+  color:#1e293b;background:#fff;border:1px solid #dbe3ee;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease}
+.mq-act .ic{font-size:13px;line-height:1}
+.mq-act:hover{transform:translateY(-1px);border-color:#93c5fd;background:#f4f8ff;
+  box-shadow:0 6px 16px rgba(37,99,235,.14)}
+.mq-act.primary{color:#fff;border-color:transparent;
+  background:linear-gradient(135deg,#2563eb,#38bdf8)}
+.mq-act.primary:hover{background:linear-gradient(135deg,#1d4ed8,#0ea5e9);
+  box-shadow:0 8px 20px rgba(37,99,235,.30)}
+.mq-act:active{transform:translateY(0)}
+.mq-dark .mq-act{color:#e2e8f0;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)}
+@media (max-width:720px){
+  .mq-actions{justify-content:flex-start}
+  .mq-act{padding:6px 11px;font-size:12px}
+}
+</style>
+{% endblock %}

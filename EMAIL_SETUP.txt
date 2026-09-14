@@ -1,0 +1,35 @@
+======================================================
+MediQueue AI — Email (SMTP) Setup
+======================================================
+
+The included default Gmail credentials no longer work
+(Gmail returned 535 "Username and Password not accepted").
+You MUST use your own Gmail App Password.
+
+STEP 1 — Enable 2-Step Verification
+  https://myaccount.google.com/security
+
+STEP 2 — Create a Gmail App Password
+  https://myaccount.google.com/apppasswords
+  Copy the 16-character password (spaces don't matter).
+
+STEP 3 — Put it in config.py
+  Open  config.py  and edit:
+        SMTP_USER     = "your.email@gmail.com"
+        SMTP_PASSWORD = "taszzeunzxntjknd"     # 16-char app password
+        SMTP_FROM     = "MediQueue AI <your.email@gmail.com>"
+
+  OR set environment variables before running:
+        set SMTP_USER=your.email@gmail.com          (Windows)
+        set SMTP_PASSWORD=xxxxxxxxxxxxxxxx
+        export SMTP_USER=your.email@gmail.com       (Mac/Linux)
+        export SMTP_PASSWORD=xxxxxxxxxxxxxxxx
+
+STEP 4 — Run the app
+        python app.py
+
+Every send attempt is recorded in the "email_logs" table
+and visible at /admin/emails inside the app. If a send
+fails, that page shows the exact reason (auth error,
+network error, etc.).
+======================================================

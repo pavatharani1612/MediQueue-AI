@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}My Consultation History — Doctor{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h1 class="section-title">🗂 Consultation History</h1>
+      <p class="section-sub">Every appointment assigned to you, with consultation details.</p>
+    </div>
+  </div>
+
+  <div class="grid c4">
+    <div class="card stat glass"><div class="num">{{ counts.all }}</div><div class="lbl">Total</div></div>
+    <div class="card stat glass"><div class="num">{{ counts.completed }}</div><div class="lbl">Completed</div></div>
+    <div class="card stat glass"><div class="num">{{ counts.cancelled }}</div><div class="lbl">Cancelled</div></div>
+    <div class="card stat glass"><div class="num">{{ counts.missed }}</div><div class="lbl">Missed</div></div>
+  </div>
+
+  <div class="mq-chiprow" style="margin-top:18px">
+    <a class="mq-chip {{ 'active' if not f.status }}" href="/doctor/history">All ({{ counts.all }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Completed' }}" href="/doctor/history?status=Completed">Completed ({{ counts.completed }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Cancelled' }}" href="/doctor/history?status=Cancelled">Cancelled ({{ counts.cancelled }})</a>
+    <a class="mq-chip {{ 'active' if f.status=='Missed' }}" href="/doctor/history?status=Missed">Missed ({{ counts.missed }})</a>
+  </div>
+
+  <form class="mq-filters" method="get">
+    <div class="mq-field"><label>Status</label>
+      <select class="mq-select" name="status">
+        <option value="">Any</option>
+        {% for s in ['Waiting','InProgress','Completed','Cancelled','Missed'] %}
+        <option value="{{ s }}" {{ 'selected' if f.status==s }}>{{ s }}</option>{% endfor %}
+      </select></div>
+    <div class="mq-field"><label>From</label>
+      <input class="mq-input" type="date" name="from" value="{{ f['from'] }}"></div>
+    <div class="mq-field"><label>To</label>
+      <input class="mq-input" type="date" name="to" value="{{ f.to }}"></div>
+    <div class="mq-field"><button class="mq-btn" type="submit">Apply filters</button></div>
+  </form>
+
+  <div class="mq-table-wrap mq-mt">
+    <table class="mq-table">
+      <thead><tr>
+        <th>Date</th><th>Time</th><th>Patient</th><th>Token</th><th>Department</th>
+        <th>Reason</th><th>Priority</th><th>Check-in</th><th>Completed</th>
+        <th>Wait</th><th>Status</th>
+      </tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.appt_date }}</td>
+          <td>{{ (r.appt_time or r.slot_time or r.predicted_time) | ampm }}</td>
+          <td>{{ r.pname or '—' }}</td>
+          <td><b>{{ r.queue_no }}</b></td>
+          <td>{{ r.department }}</td>
+          <td>{{ r.reason or '—' }}</td>
+          <td><span class="mq-pill {% if r.priority=='Emergency' %}emergency{% elif r.priority=='Urgent' %}warn{% else %}muted{% endif %}">{{ r.priority }}</span></td>
+          <td>{{ r.checkin_time | ampm_dt if r.checkin_time else '—' }}</td>
+          <td>{{ r.actual_end | ampm_dt if r.actual_end else '—' }}</td>
+          <td>{{ r.actual_wait_minutes ~ ' min' if r.actual_wait_minutes is not none else '—' }}</td>
+          <td><span class="mq-pill {% if r.status=='Completed' %}ok{% elif r.status in ('Cancelled','Missed') %}danger{% elif r.status=='InProgress' %}info{% else %}warn{% endif %}">
+            {{ 'Consulting' if r.status=='InProgress' else r.status }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="11" class="mq-empty">No appointments match these filters.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

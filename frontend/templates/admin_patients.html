@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<div class="container">
+  <h1 class="section-title">Patients</h1>
+  <div class="card" style="padding:0"><table>
+    <tr><th>ID</th><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Email</th><th>Blood</th></tr>
+    {% for r in rows %}<tr><td>{{r.id}}</td><td>{{r.name}}</td><td>{{r.age}}</td>
+      <td>{{r.gender}}</td><td>{{r.phone}}</td><td>{{r.email}}</td><td>{{r.blood_group}}</td></tr>{% endfor %}
+  </table></div>
+</div>{% endblock %}

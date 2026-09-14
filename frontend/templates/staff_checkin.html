@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Check-in Desk — MediQueue AI{% endblock %}
+{% block content %}
+<div class="mq-wrap">
+  <h1 class="mq-title">Check-in <span class="accent">Desk</span></h1>
+  <p class="mq-sub">Scan the patient's QR appointment pass, or enter the appointment
+     code manually. Duplicate check-ins are automatically blocked.</p>
+
+  {% if result %}
+    <div class="mq-alert {{ 'ok' if result.ok else 'danger' }}">{{ result.msg }}</div>
+  {% endif %}
+
+  <div class="mq-grid c2">
+    <div class="mq-card">
+      <h3 style="margin-top:0">Manual / scanned code</h3>
+      <form method="post" autocomplete="off">
+        <div class="mq-field">
+          <label for="code">Appointment code</label>
+          <input class="mq-input mq-code-input" id="code" name="code"
+                 placeholder="MQ-XXXXXX-1234" required autofocus>
+        </div>
+        <button class="mq-btn" type="submit">Verify &amp; check in</button>
+      </form>
+      <p style="color:#64748b;font-size:13px;margin-top:12px">
+        Tip: most USB/Bluetooth QR scanners type the code and press Enter —
+        just keep the field focused.</p>
+    </div>
+
+    <div class="mq-card">
+      <h3 style="margin-top:0">Camera scan</h3>
+      <div id="mq-scan-box" style="border-radius:14px;overflow:hidden;background:#f1f5f9;min-height:200px;display:grid;place-items:center;color:#64748b">
+        Click "Start camera" to scan a pass.
+      </div>
+      <div class="mq-row" style="margin-top:12px">
+        <button class="mq-btn ghost" id="mq-scan-start" type="button">Start camera</button>
+        <button class="mq-btn ghost" id="mq-scan-stop" type="button">Stop</button>
+      </div>
+      <p style="color:#64748b;font-size:13px;margin-top:10px">
+        Camera scanning needs HTTPS or localhost. The manual code entry on the left
+        always works as a secure fallback.</p>
+    </div>
+  </div>
+
+  {% if appt %}
+  <div class="mq-card mq-mt">
+    <h3 style="margin-top:0">Verified appointment</h3>
+    <div class="mq-grid c3">
+      <div><div class="mq-stat-label">Patient</div><b>{{ appt.pname }}</b></div>
+      <div><div class="mq-stat-label">Doctor</div><b>Dr {{ appt.dname }}</b></div>
+      <div><div class="mq-stat-label">Token</div><b>{{ appt.queue_no }}</b></div>
+      <div><div class="mq-stat-label">Department</div><b>{{ appt.department }}</b></div>
+      <div><div class="mq-stat-label">Priority</div><b>{{ appt.priority }}</b></div>
+      <div><div class="mq-stat-label">Check-in time</div><b>{{ ampm(appt.checkin_time) }}</b></div>
+    </div>
+  </div>
+  {% endif %}
+
+  <h2 class="mq-title mq-mt" style="font-size:20px">Today's appointments</h2>
+  <div class="mq-table-wrap">
+    <table class="mq-table">
+      <thead><tr>
+        <th>Token</th><th>Patient</th><th>Doctor</th><th>Priority</th>
+        <th>Status</th><th>Check-in</th><th>Time</th><th>Code</th><th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in recent %}
+        <tr>
+          <td><b>{{ r.queue_no }}</b></td>
+          <td>{{ r.pname }}</td>
+          <td>Dr {{ r.dname }}</td>
+          <td><span class="mq-pill {% if r.priority=='Emergency' %}emergency{% elif r.priority=='Urgent' %}warn{% else %}muted{% endif %}">{{ r.priority }}</span></td>
+          <td><span class="mq-pill {% if r.status=='Completed' %}ok{% elif r.status in ('Cancelled','Missed') %}danger{% else %}info{% endif %}">{{ r.status }}</span></td>
+          <td><span class="mq-pill {% if r.checkin_status=='Checked-In' %}ok{% else %}muted{% endif %}">{{ r.checkin_status or 'Booked' }}</span></td>
+          <td>{{ ampm(r.checkin_time) if r.checkin_time else '—' }}</td>
+          <td style="font-family:ui-monospace,monospace;font-size:12px">{{ r.qr_token }}</td>
+          <td>
+            {% if (r.checkin_status or 'Booked') != 'Checked-In' and r.status not in ('Completed','Cancelled') %}
+            <a class="mq-btn sm" href="/staff/checkin/scan/{{ r.qr_token }}">Check in</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="9" class="mq-empty">No appointments today.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+(function(){
+  var scanner=null;
+  var box=document.getElementById('mq-scan-box');
+  document.getElementById('mq-scan-start').addEventListener('click',function(){
+    if(typeof Html5Qrcode==='undefined'){ mqToast('Scanner library unavailable — use manual code.','warn'); return; }
+    box.innerHTML='<div id="mq-reader" style="width:100%"></div>';
+    scanner=new Html5Qrcode('mq-reader');
+    scanner.start({facingMode:'environment'},{fps:10,qrbox:220},function(text){
+      var code=text.split('/').pop();
+      scanner.stop();
+      fetch('/api/staff/checkin',{method:'POST',credentials:'same-origin',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code})})
+        .then(function(r){return r.json();})
+        .then(function(d){ mqToast(d.message||d.error, d.ok?'ok':'danger');
+          setTimeout(function(){location.reload();},1200); })
+        .catch(function(){ mqToast('Check-in failed.','danger'); });
+    }).catch(function(e){ box.textContent='Camera unavailable: '+e; });
+  });
+  document.getElementById('mq-scan-stop').addEventListener('click',function(){
+    if(scanner){ scanner.stop().catch(function(){}); box.textContent='Scanner stopped.'; }
+  });
+})();
+</script>
+{% endblock %}

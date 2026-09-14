@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Settings History · MediQueue AI Admin{% endblock %}
+{% block content %}
+<div class="container mq-page">
+  <div class="mq-head">
+    <div>
+      <h2 class="mq-title">Settings History</h2>
+      <p class="mq-sub">Every configuration change is stored permanently — {{ total }} record(s).</p>
+    </div>
+  </div>
+  <section class="mq-card">
+    <div class="mq-table-wrap">
+      <table class="mq-table">
+        <thead><tr><th>#</th><th>Setting</th><th>Old Value</th><th>New Value</th><th>Admin</th><th>Date</th><th>Time</th><th>IP Address</th></tr></thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td><code>{{ r.setting_key }}</code></td>
+            <td class="mq-old">{{ r.old_value or '—' }}</td>
+            <td class="mq-new">{{ r.new_value or '—' }}</td>
+            <td>{{ r.admin_name }}</td>
+            <td>{{ r.date }}</td>
+            <td>{{ r.time }}</td>
+            <td>{{ r.ip_address }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="mq-empty">No settings changes recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% set pages = ((total // per_page) + (1 if total % per_page else 0)) or 1 %}
+    <div class="mq-pager">
+      {% if page > 1 %}<a class="btn ghost sm" href="?page={{ page-1 }}">← Previous</a>{% endif %}
+      <span class="mq-hint">Page {{ page }} of {{ pages }}</span>
+      {% if page < pages %}<a class="btn ghost sm" href="?page={{ page+1 }}">Next →</a>{% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}

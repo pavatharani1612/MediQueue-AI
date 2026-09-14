@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>Smart Hospital Queue,<br/>Powered by <span class="type" data-type='["Smart Scheduling","Real-Time Data","Zero Waiting Anxiety"]'></span></h1>
+      <p class="lead">MediQueue AI predicts your consultation time, keeps you informed, and reschedules automatically — so you never wait blindly at the hospital again.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a class="btn" href="/register">Book an Appointment</a>
+      </div>
+    </div>
+    <div class="hero-illus">
+      <div class="disc"></div>
+      <div class="hero-card a">🩺 <b>40 Doctors</b><br/><small>Across 10 departments</small></div>
+      <div class="hero-card b">⚡ <b>~95% Accuracy</b><br/><small>Random Forest AI</small></div>
+      <div class="hero-card c">🔔 <b>Live Notifications</b><br/><small>Email + in-app</small></div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="grid c4">
+    <div class="card stat"><div class="num" data-count="{{stats.patients}}">0</div><div class="lbl">Patients</div></div>
+    <div class="card stat"><div class="num" data-count="{{stats.doctors}}">0</div><div class="lbl">Doctors</div></div>
+    <div class="card stat"><div class="num" data-count="{{stats.depts}}">0</div><div class="lbl">Departments</div></div>
+    <div class="card stat"><div class="num" data-count="{{stats.appts}}">0</div><div class="lbl">Appointments</div></div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:44px">Our Departments</h2>
+  <p class="section-sub">Specialist care across 10 medical departments.</p>
+  <div class="grid c3">
+    {% for d in depts %}
+    <a class="card" href="/doctors?dept={{d.name}}" style="text-decoration:none;color:inherit">
+      <div style="font-size:36px">{{d.icon}}</div>
+      <h3 style="margin:8px 0 4px;color:var(--deep)">{{d.name}}</h3>
+      <p style="color:var(--muted);margin:0">{{d.description}}</p>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="grid c2" style="margin-top:44px">
+    <div class="card gradient-card">
+      <h3 style="margin-top:0">🤖 AI Queue Prediction</h3>
+      <p>Lightweight Random Forest trained on 500 samples predicts wait time, consultation duration and confidence — recomputed live as the queue changes.</p>
+    </div>
+    <div class="card neu">
+      <h3 style="margin-top:0;color:var(--deep)">💡 Health Tips</h3>
+      <ul style="color:var(--muted);line-height:1.9">
+        <li>Drink 2-3 litres of water daily</li>
+        <li>Sleep for at least 7 hours</li>
+        <li>Get an annual full-body checkup</li>
+        <li>Practice mindfulness for 10 minutes</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 class="section-title" style="margin-top:44px">What Patients Say</h2>
+  <div class="grid c3">
+    {% for t in [("Rahul","Cardiology","No more sitting for hours. AI predicted my time to the minute!"),
+                 ("Priya","Pediatrics","Loved the smart reminders. Rescheduling was a single click."),
+                 ("Amit","Neurology","Best hospital experience ever. Zero confusion, zero waiting.")] %}
+    <div class="card">
+      <div style="font-size:28px">⭐⭐⭐⭐⭐</div>
+      <p style="color:var(--muted)">"{{t[2]}}"</p>
+      <b>{{t[0]}}</b> · <small style="color:var(--muted)">{{t[1]}}</small>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

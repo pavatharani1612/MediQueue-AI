@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Appointment Timeline — MediQueue AI{% endblock %}
+{% block content %}
+<div class="container tl-wrap">
+  <h1 class="section-title">🕒 Live Appointment Timeline</h1>
+  <p class="section-sub">Your appointment progress updates automatically every few seconds.</p>
+
+  <div class="card glass tl-card">
+    <div class="tl-head">
+      <div class="tl-doc">
+        <div class="tl-avatar">🩺</div>
+        <div>
+          <b>Dr {{ a.dname }}</b>
+          <div class="tl-meta">{{ a.ddept }}</div>
+        </div>
+      </div>
+      <span class="pill tl-status" id="tlStatus">{{ a.status }}</span>
+    </div>
+
+    <div class="tl-facts">
+      <div class="tl-fact"><span>Token</span><b>{{ a.queue_no }}</b></div>
+      <div class="tl-fact"><span>Predicted time</span><b>{{ a.predicted_time | ampm }}</b></div>
+    </div>
+
+    <div class="timeline" id="timeline"></div>
+    <p id="tlNote" class="tl-note"></p>
+  </div>
+
+  <div style="text-align:center;margin-top:16px">
+    <a class="btn ghost ripple" href="{{ url_for('patient_queue') }}">Back to Queue</a>
+  </div>
+</div>
+
+<style>
+.tl-wrap{max-width:760px}
+.tl-card{padding:22px;border-radius:18px}
+.tl-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.tl-doc{display:flex;align-items:center;gap:12px}
+.tl-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:20px;background:linear-gradient(135deg,#e0edff,#f0f9ff)}
+.tl-meta{font-size:13px;color:var(--muted);margin-top:2px}
+.tl-status{font-weight:700;letter-spacing:.02em}
+.tl-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;
+  margin-top:18px}
+.tl-fact{padding:12px 14px;border-radius:14px;background:rgba(148,163,184,.10);
+  border:1px solid rgba(148,163,184,.18)}
+.tl-fact span{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:4px}
+.tl-fact b{font-size:16px}
+.timeline{position:relative;margin:26px 0 6px;padding-left:34px}
+.timeline::before{content:"";position:absolute;left:14px;top:10px;bottom:20px;
+  width:3px;border-radius:3px;background:linear-gradient(180deg,#e2e8f0,#eef2f7)}
+.tl-step{position:relative;padding:8px 0 24px 0;opacity:.5;
+  transition:opacity .4s ease,transform .4s ease}
+.tl-step .dot{position:absolute;left:-28px;top:6px;width:24px;height:24px;
+  border-radius:50%;background:#e2e8f0;color:#64748b;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  transition:background .4s,box-shadow .4s,transform .4s}
+.tl-step .lbl{font-weight:700;color:#334155;font-size:15px;letter-spacing:-.01em}
+.tl-step .time{font-size:12.5px;color:var(--muted);margin-top:2px;min-height:16px}
+.tl-step.done{opacity:1}
+.tl-step.done .dot{background:linear-gradient(135deg,#2563eb,#38bdf8);color:#fff;
+                   box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.tl-step.active{opacity:1;transform:translateX(4px)}
+.tl-step.active .dot{background:linear-gradient(135deg,#22c55e,#16a34a);
+                     color:#fff;box-shadow:0 0 0 6px rgba(34,197,94,.18);
+                     animation:pulseDot 1.6s infinite}
+.tl-step.active .time{color:#16a34a;font-weight:600}
+.tl-step.cancelled{opacity:1}
+.tl-step.cancelled .dot{background:#ef4444;color:#fff}
+.tl-note{margin:10px 0 0;color:var(--muted);font-size:13px}
+@keyframes pulseDot{
+  0%,100%{box-shadow:0 0 0 6px rgba(34,197,94,.18)}
+  50%{box-shadow:0 0 0 12px rgba(34,197,94,.05)}
+}
+@media (max-width:560px){
+  .tl-card{padding:16px}
+  .tl-step .lbl{font-size:14px}
+}
+</style>
+
+<script>
+const ICONS = ['📝','✅','⏳','📢','🩺','🎉'];
+async function loadTL(){
+  const r = await fetch('/api/timeline/{{ a.id }}');
+  if(!r.ok) return;
+  const d = await r.json();
+  const box = document.getElementById('timeline');
+  box.innerHTML = '';
+  d.steps.forEach((label, i)=>{
+    const cls = d.cancelled ? 'cancelled'
+              : (i < d.active) ? 'done'
+              : (i === d.active) ? 'done active' : '';
+    box.insertAdjacentHTML('beforeend',
+      `<div class="tl-step ${cls}">
+         <span class="dot">${d.cancelled?'✕':ICONS[i]}</span>
+         <div class="lbl">${label}</div>
+         <div class="time">${i === d.active ? 'In progress…' : (i < d.active ? 'Done' : '')}</div>
+       </div>`);
+  });
+  document.getElementById('tlStatus').textContent = d.status;
+  document.getElementById('tlNote').textContent =
+    d.cancelled ? ('Cancelled — ' + (d.cancel_reason || 'no reason recorded'))
+                : ('Predicted time: ' + (d.predicted_time || '—'));
+}
+loadTL(); setInterval(loadTL, 6000);
+</script>
+{% endblock %}
